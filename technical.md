@@ -90,16 +90,21 @@ The player can interact with the shelter to sleep. When the player sleeps, his h
 The player can craft tools at the workbench. To craft a tool, the player needs resources. The player can see the list of tools he can craft and the resources needed to craft them.
 
 Here is the list of tools the player can craft:
-- Wooden Pickaxe: 5 woods
-- Wooden Axe: 5 woods
-- Wooden Sword: 5 woods
-- Fire Starter: 2 stones
-- Firecamp: 10 woods
-- Shelter: 30 woods and 10 stones
-- Bridge to second island: 20 woods
-- Stone Pickaxe: 5 stones and a wooden pickaxe
-- Stone Axe: 5 stones and a wooden axe
-- Stone Sword: 5 stones and a wooden sword
+
+| Level | Tool | Resources |
+| --- | --- | --- |
+| 1 | Wooden Pickaxe | 5 woods |
+| 1 | Wooden Axe | 5 woods |
+| 1 | Wooden Sword | 5 woods |
+| 3 | Bridge to second island | 20 woods |
+| 4 | Stone Pickaxe | 5 stones and 5 woods |
+| 4 | Stone Axe | 5 stones and 5 woods |
+| 4 | Stone Sword | 5 stones and 5 woods |
+| 5 | Fire Starter | 2 stones |
+| 5 | Firecamp | 10 woods |
+| 7 | Shelter | 30 woods and 10 stones |
+
+
 
 ## The Quest System
 
@@ -133,5 +138,9 @@ Here is the list of quests the player has to complete, sorted by level:
 - Craft a wooden sword
 - Kill an animal
 - Cook the meat
+
+### Level 7: The Shelter Builder
+- Craft the shelter
+- Sleep in the shelter
 
 ## Architecture
