@@ -1,4 +1,4 @@
-# Game Project, OOP Courses
+# Game Project: Night 4 Life
 
 ## Date: 03-21-2024
 
@@ -27,7 +27,7 @@
 
 - Wood
   - Source: Trees
-  - Use: Build shelter, fire, bridges, weapon & tools etc...
+  - Use: Build shelter, fire, bridges, weapons & tools etc...
 - Water
   - Source: River and sea
   - Use: Satisfy the player's thirst bar or may hurt him.
@@ -68,24 +68,30 @@ Level 5:
 
 ### Synopsis
 
-The player is the last survivor of a plane crash. He has to survive in a 2D world. To do so, he has to collect resources to build a shelter, find food and water. However, the player is not alone. He has to avoid enemies and other dangers. The player has to survive as long as possible.
+The player is the last survivor of a plane crash. He has to survive on a desert island. To do so, he has to collect resources to build a shelter and find food and water. However, the player is not alone. He has to avoid enemies and other dangers. To leave the island, the player needs to find the plane's black box located in the opposite corner of the map. To reach it, the player needs to level up by completing quests. Allowing him to unlock parts of the island.
 
 ## Documentation
 
-### One page Document
+### One-page Document
 
 #### How to install it
 
-To install this game, you will need to download the .zip by clicking on the green button `Code` then `Download ZIP` and extract it.
+To install this game, you will need to download the .zip by clicking on the green button `Code` and then `Download ZIP` and extract it.
 
 Once you extracted the file, click on the `xxx.dmg` to launch the game.
 
 #### How to play it
 
+To move the player, we will use the ZQSD keys, `A` to go left, `D` to go right, `S` to go down and `Q` to go up.
+
+To interact with the world, you will need to press the `Space` key.
+
+To open the inventory, press the `I` key.
+
 #### Technical Documentation
 
 Code
-What type of class we going to create
+What type of class are we going to create
 
 ##### Constraints
 
