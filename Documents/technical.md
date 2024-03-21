@@ -6,7 +6,7 @@ This document provides an overview of the technical aspects of the project. It i
 
 ## The Tilemap
 
-![Tilemap](./assets/tilemap.png)
+![Tilemap](../assets/tilemap.png)
 
 Above is the tilemap of the game. The game is divided into a grid of tiles. Each tile represents a different type of terrain. The player can move on the tiles and interact with them.
 
@@ -34,6 +34,7 @@ Here is the description of the different types of terrain:
 The player is represented by a sprite(16x16). The player can move on the tilemap and interact with the different types of terrain.
 
 The player has the following attributes:
+
 - Health: The player's health points. If the player's health points reach 0, the player dies.
 - Hunger: The player's hunger points. If the player's hunger points reach 0, the player loses health points.
 - Thirst: The player's thirst points. If the player's thirst points reach 0, the player loses health points.
@@ -84,27 +85,24 @@ When the firecamp don't have any wood, the firecamp is inactive and the fire goe
 
 The player can interact with the shelter to sleep. When the player sleeps, his health points, hunger points and thirst points are restored.
 
-
 ## The Crafting System
 
 The player can craft tools at the workbench. To craft a tool, the player needs resources. The player can see the list of tools he can craft and the resources needed to craft them.
 
 Here is the list of tools the player can craft:
 
-| Level | Tool | Resources |
-| --- | --- | --- |
-| 1 | Wooden Pickaxe | 5 woods |
-| 1 | Wooden Axe | 5 woods |
-| 1 | Wooden Sword | 5 woods |
-| 3 | Bridge to second island | 20 woods |
-| 4 | Stone Pickaxe | 5 stones and 5 woods |
-| 4 | Stone Axe | 5 stones and 5 woods |
-| 4 | Stone Sword | 5 stones and 5 woods |
-| 5 | Fire Starter | 2 stones |
-| 5 | Firecamp | 10 woods |
-| 7 | Shelter | 30 woods and 10 stones |
-
-
+| Level | Tool                    | Resources              |
+| ----- | ----------------------- | ---------------------- |
+| 1     | Wooden Pickaxe          | 5 woods                |
+| 1     | Wooden Axe              | 5 woods                |
+| 1     | Wooden Sword            | 5 woods                |
+| 3     | Bridge to second island | 20 woods               |
+| 4     | Stone Pickaxe           | 5 stones and 5 woods   |
+| 4     | Stone Axe               | 5 stones and 5 woods   |
+| 4     | Stone Sword             | 5 stones and 5 woods   |
+| 5     | Fire Starter            | 2 stones               |
+| 5     | Firecamp                | 10 woods               |
+| 7     | Shelter                 | 30 woods and 10 stones |
 
 ## The Quest System
 
@@ -113,33 +111,40 @@ The player has to complete quests to progress in the game. Each quest has a leve
 Here is the list of quests the player has to complete, sorted by level:
 
 ### Level 1: The Beginner
+
 - Collect 5 woods
 - Collect 2 fruits
 
 ### Level 2: The Crafter
+
 - Craft the workbench
 - Drink water
 
 ### Level 3: The Lumberjack
+
 - Craft a wooden axe
 - Collect 20 woods
 - Craft the bridge to the second island
 
 ### Level 4: The Stone Age
+
 - Craft a wooden pickaxe
 - Collect 10 stones
 
 ### Level 5: The Firestarter
+
 - Craft a firecamp
 - Feed the firecamp with 5 woods
 - Craft a fire starter
 
 ### Level 6: The Hunter
+
 - Craft a wooden sword
 - Kill an animal
 - Cook the meat
 
 ### Level 7: The Shelter Builder
+
 - Craft the shelter
 - Sleep in the shelter
 
