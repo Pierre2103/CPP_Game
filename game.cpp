@@ -11,7 +11,7 @@ const int windowHeight = 1080; // Example size, adjust as needed
 int mapCenterX = mapWidth * tileSize / 2;
 int mapCenterY = mapHeight * tileSize / 2;
 
-const int speed = 4;
+const int speed = 2;
 
 // Enumeration for the terrain types.
 enum Terrain {
