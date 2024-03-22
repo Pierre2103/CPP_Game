@@ -11,7 +11,7 @@ const int windowHeight = 1080; // Example size, adjust as needed
 int mapCenterX = mapWidth * tileSize / 2;
 int mapCenterY = mapHeight * tileSize / 2;
 
-const int speed = 2;
+const int speed = 4;
 
 // Enumeration for the terrain types.
 enum Terrain {
@@ -82,34 +82,56 @@ int main() {
             }
         }
 
-        //if the player move  
+        // Movement vector.
+        sf::Vector2f movement(0, 0);
+
+        // Boolean flag to toggle between two player textures.
+        bool isTexture1 = true;
 
         // Handle input to move the map (and thus the player appears to move).
-        sf::Vector2f movement(0.f, 0.f);
-        // Handle input to move the map (and thus the player appears to move).
-        // Move the player sprite and change its texture accordingly
+        // Move the player sprite and change its texture accordingly.
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
             movement.x -= speed;
-            playerTexture.loadFromFile("assets/player_left_1.png");
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+            if (isTexture1) {
+                playerTexture.loadFromFile("assets/player_left_1.png");
+            } else {
+                playerTexture.loadFromFile("assets/player_left_2.png");
+            }
+            isTexture1 = !isTexture1;
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             movement.x += speed;
-            playerTexture.loadFromFile("assets/player_right_1.png");
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+            if (isTexture1) {
+                playerTexture.loadFromFile("assets/player_right_1.png");
+            } else {
+                playerTexture.loadFromFile("assets/player_right_2.png");
+            }
+            isTexture1 = !isTexture1;
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             movement.y -= speed;
-            playerTexture.loadFromFile("assets/player_up_1.png");
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+            if (isTexture1) {
+                playerTexture.loadFromFile("assets/player_up_1.png");
+            } else {
+                playerTexture.loadFromFile("assets/player_up_2.png");
+            }
+            isTexture1 = !isTexture1;
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
             movement.y += speed;
-            playerTexture.loadFromFile("assets/player_down_1.png");
+            if (isTexture1) {
+                playerTexture.loadFromFile("assets/player_down_1.png");
+            } else {
+                playerTexture.loadFromFile("assets/player_down_2.png");
+            }
+            isTexture1 = !isTexture1;
         }
 
         // Update the player sprite texture
         playerSprite.setTexture(playerTexture);
 
-        playerPosition += movement;
+        playerPosition += 0.5f * movement;
         playerSprite.setPosition(playerPosition);
+
+        // Update the view to follow the player sprite (centered).
+        window.setView(sf::View(sf::FloatRect(playerPosition.x - 152, playerPosition.y - 80, windowWidth/6, windowHeight/6)));
         // Clear the window.
         window.clear();
 
