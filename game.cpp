@@ -8,6 +8,8 @@
 const int windowWidth = 1920; // Example size, adjust as needed
 const int windowHeight = 1080; // Example size, adjust as needed
 
+const int speed = 3;
+
 // Enumeration for the terrain types.
 enum Terrain {
     Grass,
@@ -29,6 +31,8 @@ enum Terrain {
 int main() {
     // Create the main window.
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Tilemap Display");
+    window.setView(sf::View(sf::FloatRect(0, 0, windowWidth /3 , windowHeight /3)));
+
 
     // Load textures.
     std::vector<sf::Texture> textures(Terrain::NumTerrains);
@@ -60,8 +64,6 @@ int main() {
     playerTexture.loadFromFile("assets/player_left_1.png");
     sf::Sprite playerSprite(playerTexture);
 
-
-
     // Main game loop.
     while (window.isOpen()) {
         // Handle events.
@@ -72,12 +74,36 @@ int main() {
             }
         }
 
+        //if the player move  
+
         // Handle input to move the map (and thus the player appears to move).
         sf::Vector2f movement(0.f, 0.f);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) movement.y += tileSize;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) movement.y -= tileSize;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) movement.x += tileSize;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) movement.x -= tileSize;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+            movement.x -= speed;
+            // change sprite to player_left_1.png
+            playerTexture.loadFromFile("assets/player_left_1.png");
+            playerSprite.setTexture(playerTexture);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+            movement.x += speed;
+            // change sprite to player_right_1.png
+            playerTexture.loadFromFile("assets/player_right_1.png");
+            playerSprite.setTexture(playerTexture);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+            movement.y -= speed;
+            // change sprite to player_up_1.png
+            playerTexture.loadFromFile("assets/player_up_1.png");
+            playerSprite.setTexture(playerTexture);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+            movement.y += speed;
+            // change sprite to player_down_1.png
+            playerTexture.loadFromFile("assets/player_down_1.png");
+            playerSprite.setTexture(playerTexture);
+        }
+
+
         playerPosition += movement;
 
         // Clear the window.
@@ -94,6 +120,14 @@ int main() {
                 }
             }
         }
+
+        // //zoom in and out
+        // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+        //     window.setView(sf::View(sf::FloatRect(0, 0, windowWidth, windowHeight)));
+        // }
+        // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+        //     window.setView(sf::View(sf::FloatRect(0, 0, windowWidth /3 , windowHeight /3)));
+        // }
 
         // Update the window.
         window.display();
