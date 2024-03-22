@@ -44,6 +44,12 @@ The player has the following attributes:
 - Position: The player's position on the tilemap.
 - Direction: The player's direction. The player can move in four directions: up, down, left, right.
 
+## Physics
+
+### Collision Detection
+
+The player can move on the tilemap. The player's movement is restricted by the type of terrain. The player cannot move on water or trees. The player can move on grass, sand, and rocks.
+
 ## The Interaction System
 
 ### Trees
@@ -51,6 +57,8 @@ The player has the following attributes:
 The player can interact with trees to collect wood. To collect wood, the player has to press the space key when he is near a tree. The player can collect wood until his inventory is full.
 A Tree give 5 woods and 2 fruits.
 A Fruit give 3 hunger points out of 10.
+
+Sprite of the tree: ![Tree](./assets/tree.png)
 
 ### Water
 
@@ -71,7 +79,7 @@ The player can interact with the workbench to craft tools. Once the player inter
 
 We need to provide 10 woods to build the workbench.
 
-To see the crafting system, see the [Crafting System](#crafting-system) section.
+To see the crafting system, see the [Crafting System](#the-crafting-system) section.
 
 ### The Firecamp
 
@@ -148,4 +156,6 @@ Here is the list of quests the player has to complete, sorted by level:
 - Craft the shelter
 - Sleep in the shelter
 
-## Architecture
+## Class Diagram
+
+![Class Diagram](./map.png)
