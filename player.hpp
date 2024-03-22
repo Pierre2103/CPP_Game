@@ -19,9 +19,6 @@ public:
     void openInventory() {
     }
 
-    void move() {
-    }
-
     void checkQuests() {
     }
 

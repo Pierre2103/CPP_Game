@@ -1,6 +1,4 @@
-#include <string>
-#include <iostream>
-#include <vector>
+#include "global.hpp"
 
 // Define the entity class
 
