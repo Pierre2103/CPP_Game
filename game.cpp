@@ -8,7 +8,10 @@
 const int windowWidth = 1920; // Example size, adjust as needed
 const int windowHeight = 1080; // Example size, adjust as needed
 
-const int speed = 3;
+int mapCenterX = mapWidth * tileSize / 2;
+int mapCenterY = mapHeight * tileSize / 2;
+
+const int speed = 4;
 
 // Enumeration for the terrain types.
 enum Terrain {
@@ -30,8 +33,9 @@ enum Terrain {
 
 int main() {
     // Create the main window.
-    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Tilemap Display");
-    window.setView(sf::View(sf::FloatRect(0, 0, windowWidth /3 , windowHeight /3)));
+    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Night 4 Life");
+
+    // std::cout << windowWidth/6 << ", " << windowHeight/6 << std::endl;
 
 
     // Load textures.
@@ -57,15 +61,19 @@ int main() {
         terrainSprites[i].setTexture(textures[i]);
     }
 
-    // Initialize player position at the center of the map with this sprite assets/player_left_1.png
-    sf::Vector2f playerPosition(windowWidth / 2, windowHeight / 2);
+    window.setView(sf::View(sf::FloatRect(1584, 404, windowWidth/6 , windowHeight/6)));
+
+    // Initialize player position at the center of the screen.
+    sf::Vector2f playerPosition(1744, 494);
     // put the player sprite here
     sf::Texture playerTexture;
-    playerTexture.loadFromFile("assets/player_left_1.png");
+    playerTexture.loadFromFile("assets/player_down_idle.png");
     sf::Sprite playerSprite(playerTexture);
+
 
     // Main game loop.
     while (window.isOpen()) {
+    // std::cout << "Player position: " << playerPosition.x << ", " << playerPosition.y << std::endl;
         // Handle events.
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -78,34 +86,30 @@ int main() {
 
         // Handle input to move the map (and thus the player appears to move).
         sf::Vector2f movement(0.f, 0.f);
+        // Handle input to move the map (and thus the player appears to move).
+        // Move the player sprite and change its texture accordingly
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
             movement.x -= speed;
-            // change sprite to player_left_1.png
             playerTexture.loadFromFile("assets/player_left_1.png");
-            playerSprite.setTexture(playerTexture);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             movement.x += speed;
-            // change sprite to player_right_1.png
             playerTexture.loadFromFile("assets/player_right_1.png");
-            playerSprite.setTexture(playerTexture);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             movement.y -= speed;
-            // change sprite to player_up_1.png
             playerTexture.loadFromFile("assets/player_up_1.png");
-            playerSprite.setTexture(playerTexture);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
             movement.y += speed;
-            // change sprite to player_down_1.png
             playerTexture.loadFromFile("assets/player_down_1.png");
-            playerSprite.setTexture(playerTexture);
         }
 
+        // Update the player sprite texture
+        playerSprite.setTexture(playerTexture);
 
         playerPosition += movement;
-
+        playerSprite.setPosition(playerPosition);
         // Clear the window.
         window.clear();
 
@@ -115,19 +119,14 @@ int main() {
                 int terrainType = tilemap[y][x];
                 if (terrainType >= 0 && terrainType < Terrain::NumTerrains) {
                     terrainSprites[terrainType].setPosition(x * tileSize - playerPosition.x + windowWidth / 2, 
-                                                             y * tileSize - playerPosition.y + windowHeight / 2);
+                                                            y * tileSize - playerPosition.y + windowHeight / 2);
                     window.draw(terrainSprites[terrainType]);
                 }
             }
         }
 
-        // //zoom in and out
-        // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-        //     window.setView(sf::View(sf::FloatRect(0, 0, windowWidth, windowHeight)));
-        // }
-        // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-        //     window.setView(sf::View(sf::FloatRect(0, 0, windowWidth /3 , windowHeight /3)));
-        // }
+        // Draw the player.
+        window.draw(playerSprite);
 
         // Update the window.
         window.display();
