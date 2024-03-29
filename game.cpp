@@ -87,7 +87,7 @@ int main() {
 
         // Handle input to move the map (and thus the player appears to move).
         // Move the player sprite and change its texture accordingly between 2 frames.
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             movement.y -= speed;
             if (alternate) {
                 playerTexture.loadFromFile("assets/player_up_1.png");
@@ -95,7 +95,7 @@ int main() {
                 playerTexture.loadFromFile("assets/player_up_2.png");
             }
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
             movement.x -= speed;
             if (alternate) {
                 playerTexture.loadFromFile("assets/player_left_1.png");
@@ -103,7 +103,7 @@ int main() {
                 playerTexture.loadFromFile("assets/player_left_2.png");
             }
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
             movement.y += speed;
             if (alternate) {
                 playerTexture.loadFromFile("assets/player_down_1.png");
@@ -111,7 +111,7 @@ int main() {
                 playerTexture.loadFromFile("assets/player_down_2.png");
             }
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             movement.x += speed;
             if (alternate) {
                 playerTexture.loadFromFile("assets/player_right_1.png");
