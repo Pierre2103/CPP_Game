@@ -6,7 +6,7 @@
 
 const int windowWidth = 1920;
 const int windowHeight = 1080;
-const int speed = 4;
+const int speed = 3;
 
 int mapCenterX = mapWidth * tileSize / 2;
 int mapCenterY = mapHeight * tileSize / 2;
@@ -85,6 +85,11 @@ int main() {
         // Movement vector.
         sf::Vector2f movement(0, 0);
 
+        // Determine the tile the player is standing on.
+        int currentTileX = playerPosition.x / tileSize;
+        int currentTileY = playerPosition.y / tileSize;
+        int currentTileType = tilemap[currentTileY][currentTileX];
+
         // Handle input to move the map (and thus the player appears to move).
         // Move the player sprite and change its texture accordingly between 2 frames.
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
@@ -142,6 +147,12 @@ int main() {
                     playerTexture.loadFromFile("assets/player_right_0.png");
                     break;
             }
+        }
+
+        // Check if the current tile is sand and adjust speed accordingly.
+        if (currentTileType == Sand) {
+            // Reduce the speed on sand tiles.
+            movement *= 0.65f; // You can adjust the factor as needed.
         }
 
         alternate = (alternate + 1) % 3; // Cycle through 0, 1, 2
