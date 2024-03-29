@@ -88,26 +88,39 @@ int main() {
         // Handle input to move the map (and thus the player appears to move).
         // Move the player sprite and change its texture accordingly.
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-            if (tilemap[(int)(playerPosition.y / tileSize)][(int)((playerPosition.x - speed) / tileSize)] != Water) {
+            if (tilemap[(int)(playerPosition.y / tileSize)][(int)((playerPosition.x - speed) / tileSize)] == Water) {
+                playerTexture.loadFromFile("assets/player_left_0.png");
+                std::cout << "Water" << std::endl;
+            } else {
                 movement.x -= speed;
                 playerTexture.loadFromFile("assets/player_left_1.png");
             }
         } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-            if (tilemap[(int)(playerPosition.y / tileSize)][(int)((playerPosition.x + speed + playerSprite.getGlobalBounds().width) / tileSize)] != Water) {
+            if (tilemap[(int)(playerPosition.y / tileSize)][(int)((playerPosition.x + speed + playerSprite.getGlobalBounds().width) / tileSize)] == Water) {
+                playerTexture.loadFromFile("assets/player_right_0.png");
+                std::cout << "Water" << std::endl;
+            } else {
                 movement.x += speed;
                 playerTexture.loadFromFile("assets/player_right_1.png");
             }
         } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-            if (tilemap[(int)((playerPosition.y - speed) / tileSize)][(int)(playerPosition.x / tileSize)] != Water) {
+            if (tilemap[(int)((playerPosition.y - speed) / tileSize)][(int)(playerPosition.x / tileSize)] == Water) {
+                playerTexture.loadFromFile("assets/player_up_0.png");
+                std::cout << "Water" << std::endl;
+            } else {
                 movement.y -= speed;
                 playerTexture.loadFromFile("assets/player_up_1.png");
             }
         } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-            if (tilemap[(int)((playerPosition.y + speed + playerSprite.getGlobalBounds().height) / tileSize)][(int)(playerPosition.x / tileSize)] != Water) {
+            if (tilemap[(int)((playerPosition.y + speed + playerSprite.getGlobalBounds().height) / tileSize)][(int)(playerPosition.x / tileSize)] == Water) {
+                playerTexture.loadFromFile("assets/player_down_0.png");
+                std::cout << "Water" << std::endl;
+            } else {
                 movement.y += speed;
                 playerTexture.loadFromFile("assets/player_down_1.png");
             }
         }
+
 
 
         // Update the player sprite texture
