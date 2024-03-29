@@ -81,7 +81,8 @@ int main() {
             }
         }
 
-        printf("The player is on the tile (%d, %d)\n", (int)playerPosition.x / tileSize, (int)playerPosition.y / tileSize);
+        // printf("The player is on the tile (%d, %d)\n", (int)playerPosition.x / tileSize, (int)playerPosition.y / tileSize);
+
         // Movement vector.
         sf::Vector2f movement(0, 0);
 
