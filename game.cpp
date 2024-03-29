@@ -38,9 +38,6 @@ int main() {
     // Create the main window.
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Night 4 Life");
 
-    // std::cout << windowWidth/6 << ", " << windowHeight/6 << std::endl;
-
-
     // Load textures.
     std::vector<sf::Texture> textures(Terrain::NumTerrains);
     // Load textures for each terrain type...
@@ -77,7 +74,6 @@ int main() {
 
     // Main game loop.
     while (window.isOpen()) {
-    // std::cout << "Player position: " << playerPosition.x << ", " << playerPosition.y << std::endl;
         // Handle events.
         sf::Event event;
         while (window.pollEvent(event)) {
