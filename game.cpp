@@ -169,7 +169,7 @@ int main() {
             // Check if the new position is on a water tile (assuming water tiles are represented by value 1)
             int tileX = newPosition.x / tileSize;
             int tileY = newPosition.y / tileSize;
-            if (tilemap[tileY][tileX] != Water) {
+            if (tilemap[tileY][tileX] != Water && tilemap[tileY][tileX] != Tree) {
                 // Move the player to the new position
                 playerPosition = newPosition;
                 playerSprite.setPosition(playerPosition);
@@ -188,11 +188,18 @@ int main() {
         // Clear the window
         window.clear();
 
-        // Draw the terrain sprites
+        // Draw the terrain sprites with the trees layered over grass
         for (int y = 0; y < mapHeight; ++y) {
             for (int x = 0; x < mapWidth; ++x) {
                 int terrainType = tilemap[y][x];
                 if (terrainType >= 0 && terrainType < Terrain::NumTerrains) {
+                    // If the terrain is a tree, draw the grass first
+                    if (terrainType == Tree) {
+                        int grassType = Grass; // Assuming grass is represented by 0
+                        terrainSprites[grassType].setPosition(x * tileSize, y * tileSize);
+                        window.draw(terrainSprites[grassType]);
+                    }
+                    // Draw the terrain sprite
                     terrainSprites[terrainType].setPosition(x * tileSize, y * tileSize);
                     window.draw(terrainSprites[terrainType]);
                 }
