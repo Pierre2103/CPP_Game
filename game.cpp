@@ -66,7 +66,7 @@ int main() {
     window.setView(sf::View(sf::FloatRect(1584, 404, windowWidth/6 , windowHeight/6)));
 
     // Initialize player position at the center of the screen.
-    sf::Vector2f playerPosition(1744, 486);
+    sf::Vector2f playerPosition(1744, 494);
     // put the player sprite here
     sf::Texture playerTexture;
     playerTexture.loadFromFile("assets/player_down_0.png");
