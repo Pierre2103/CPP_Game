@@ -185,13 +185,13 @@ int main() {
         // Clear the window
         window.clear();
 
-        // Draw the terrain sprites with the trees layered over grass
+        // Draw the terrain sprites with trees layered over grass
         for (int y = 0; y < mapHeight; ++y) {
             for (int x = 0; x < mapWidth; ++x) {
                 int terrainType = tilemap[y][x];
                 if (terrainType >= 0 && terrainType < Terrain::NumTerrains) {
-                    // If the terrain is a tree, draw the grass first
-                    if (terrainType == Tree) {
+                    // If the terrain is a tree or a firecamp, draw the grass first
+                    if (terrainType == Tree || terrainType == Firecamp) {
                         int grassType = Grass; // Assuming grass is represented by 0
                         terrainSprites[grassType].setPosition(x * tileSize, y * tileSize);
                         window.draw(terrainSprites[grassType]);
