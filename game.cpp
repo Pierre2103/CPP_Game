@@ -148,10 +148,21 @@ int main() {
 
         playerSprite.setTexture(playerTexture);
 
-        playerPosition.x += movement.x;
-        playerPosition.y += movement.y;
+        // Calculate the potential new position of the player
+        sf::Vector2f newPosition = playerPosition + movement;
 
-        playerSprite.setPosition(playerPosition);
+        // Check if the new position is within the map boundaries
+        if (newPosition.x >= 0 && newPosition.x < mapWidth * tileSize &&
+            newPosition.y >= 0 && newPosition.y < mapHeight * tileSize) {
+            // Check if the new position is on a water tile (assuming water tiles are represented by value 1)
+            int tileX = newPosition.x / tileSize;
+            int tileY = newPosition.y / tileSize;
+            if (tilemap[tileY][tileX] != Water) {
+                // Move the player to the new position
+                playerPosition = newPosition;
+                playerSprite.setPosition(playerPosition);
+            }
+        }
 
         // Calculate the view size based on the window size and the zoom level
         sf::Vector2f viewSize(windowWidth / zoomLevel, windowHeight / zoomLevel);
@@ -181,7 +192,6 @@ int main() {
 
         // Display the contents of the window
         window.display();
-
     }
 
     return 0;
