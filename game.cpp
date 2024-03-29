@@ -54,7 +54,7 @@ int main() {
     textures[Blackbox].loadFromFile("assets/no_texture.png");
     textures[ShelterWalls].loadFromFile("assets/no_texture.png");
     textures[AnimalSpawner].loadFromFile("assets/no_texture.png");
-    textures[PlayerSpawn].loadFromFile("assets/no_texture.png");
+    textures[PlayerSpawn].loadFromFile("assets/PlayerSpawn.png");
 
     // Create sprites for each terrain type.
     std::vector<sf::Sprite> terrainSprites(Terrain::NumTerrains);
