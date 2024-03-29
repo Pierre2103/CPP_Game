@@ -88,18 +88,27 @@ int main() {
         // Handle input to move the map (and thus the player appears to move).
         // Move the player sprite and change its texture accordingly.
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-            movement.x -= speed;
-            playerTexture.loadFromFile("assets/player_left_1.png");
+            if (tilemap[(int)(playerPosition.y / tileSize)][(int)((playerPosition.x - speed) / tileSize)] != Water) {
+                movement.x -= speed;
+                playerTexture.loadFromFile("assets/player_left_1.png");
+            }
         } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-            movement.x += speed;
-            playerTexture.loadFromFile("assets/player_right_1.png");
+            if (tilemap[(int)(playerPosition.y / tileSize)][(int)((playerPosition.x + speed + playerSprite.getGlobalBounds().width) / tileSize)] != Water) {
+                movement.x += speed;
+                playerTexture.loadFromFile("assets/player_right_1.png");
+            }
         } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-            movement.y -= speed;
-            playerTexture.loadFromFile("assets/player_up_1.png");
+            if (tilemap[(int)((playerPosition.y - speed) / tileSize)][(int)(playerPosition.x / tileSize)] != Water) {
+                movement.y -= speed;
+                playerTexture.loadFromFile("assets/player_up_1.png");
+            }
         } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-            movement.y += speed;
-            playerTexture.loadFromFile("assets/player_down_1.png");
+            if (tilemap[(int)((playerPosition.y + speed + playerSprite.getGlobalBounds().height) / tileSize)][(int)(playerPosition.x / tileSize)] != Water) {
+                movement.y += speed;
+                playerTexture.loadFromFile("assets/player_down_1.png");
+            }
         }
+
 
         // Update the player sprite texture
         playerSprite.setTexture(playerTexture);
@@ -117,8 +126,7 @@ int main() {
             for (int x = 0; x < mapWidth; ++x) {
                 int terrainType = tilemap[y][x];
                 if (terrainType >= 0 && terrainType < Terrain::NumTerrains) {
-                    terrainSprites[terrainType].setPosition(x * tileSize - playerPosition.x + windowWidth / 2, 
-                                                            y * tileSize - playerPosition.y + windowHeight / 2);
+                    terrainSprites[terrainType].setPosition(x * tileSize - playerPosition.x + windowWidth / 2, y * tileSize - playerPosition.y + windowHeight / 2);
                     window.draw(terrainSprites[terrainType]);
                 }
             }
