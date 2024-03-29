@@ -67,7 +67,7 @@ int main() {
     sf::Vector2f playerPosition(1744, 494);
     // put the player sprite here
     sf::Texture playerTexture;
-    playerTexture.loadFromFile("assets/player_down_idle.png");
+    playerTexture.loadFromFile("assets/player_down_0.png");
     sf::Sprite playerSprite(playerTexture);
 
 
@@ -85,43 +85,20 @@ int main() {
         // Movement vector.
         sf::Vector2f movement(0, 0);
 
-        // Boolean flag to toggle between two player textures.
-        bool isTexture1 = true;
-
         // Handle input to move the map (and thus the player appears to move).
         // Move the player sprite and change its texture accordingly.
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
             movement.x -= speed;
-            if (isTexture1) {
-                playerTexture.loadFromFile("assets/player_left_1.png");
-            } else {
-                playerTexture.loadFromFile("assets/player_left_2.png");
-            }
-            isTexture1 = !isTexture1;
+            playerTexture.loadFromFile("assets/player_left_1.png");
         } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             movement.x += speed;
-            if (isTexture1) {
-                playerTexture.loadFromFile("assets/player_right_1.png");
-            } else {
-                playerTexture.loadFromFile("assets/player_right_2.png");
-            }
-            isTexture1 = !isTexture1;
+            playerTexture.loadFromFile("assets/player_right_1.png");
         } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             movement.y -= speed;
-            if (isTexture1) {
-                playerTexture.loadFromFile("assets/player_up_1.png");
-            } else {
-                playerTexture.loadFromFile("assets/player_up_2.png");
-            }
-            isTexture1 = !isTexture1;
+            playerTexture.loadFromFile("assets/player_up_1.png");
         } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
             movement.y += speed;
-            if (isTexture1) {
-                playerTexture.loadFromFile("assets/player_down_1.png");
-            } else {
-                playerTexture.loadFromFile("assets/player_down_2.png");
-            }
-            isTexture1 = !isTexture1;
+            playerTexture.loadFromFile("assets/player_down_1.png");
         }
 
         // Update the player sprite texture
