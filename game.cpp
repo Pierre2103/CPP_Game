@@ -28,6 +28,7 @@ enum Terrain {
     Blackbox,
     ShelterWalls,
     AnimalSpawner,
+    PlayerSpawn,
     NumTerrains // This will give us the number of terrains.
 };
 
@@ -54,6 +55,7 @@ int main() {
     textures[Blackbox].loadFromFile("assets/no_texture.png");
     textures[ShelterWalls].loadFromFile("assets/no_texture.png");
     textures[AnimalSpawner].loadFromFile("assets/no_texture.png");
+    textures[PlayerSpawn].loadFromFile("assets/no_texture.png");
 
     // Create sprites for each terrain type.
     std::vector<sf::Sprite> terrainSprites(Terrain::NumTerrains);
@@ -64,7 +66,7 @@ int main() {
     window.setView(sf::View(sf::FloatRect(1584, 404, windowWidth/6 , windowHeight/6)));
 
     // Initialize player position at the center of the screen.
-    sf::Vector2f playerPosition(1744, 494);
+    sf::Vector2f playerPosition(1744, 486);
     // put the player sprite here
     sf::Texture playerTexture;
     playerTexture.loadFromFile("assets/player_down_0.png");
