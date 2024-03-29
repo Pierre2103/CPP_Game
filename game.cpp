@@ -4,14 +4,12 @@
 #include <iostream>
 #include "map.hpp"
 
-// Window dimensions.
-const int windowWidth = 1920; // Example size, adjust as needed
-const int windowHeight = 1080; // Example size, adjust as needed
+const int windowWidth = 1920;
+const int windowHeight = 1080;
+const int speed = 4;
 
 int mapCenterX = mapWidth * tileSize / 2;
 int mapCenterY = mapHeight * tileSize / 2;
-
-const int speed = 4;
 
 int alternate = 0;
 
@@ -89,63 +87,70 @@ int main() {
         // Move the player sprite and change its texture accordingly between 2 frames.
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             movement.y -= speed;
-            if (alternate == 0) {
-                playerTexture.loadFromFile("assets/player_up_1.png");
-            } else if (alternate == 1) {
-                playerTexture.loadFromFile("assets/player_up_2.png");
-            } else {
-                playerTexture.loadFromFile("assets/player_up_0.png");
+            switch (alternate) {
+                case 0:
+                    playerTexture.loadFromFile("assets/player_up_1.png");
+                    break;
+                case 1:
+                    playerTexture.loadFromFile("assets/player_up_2.png");
+                    break;
+                default:
+                    playerTexture.loadFromFile("assets/player_up_0.png");
+                    break;
             }
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
             movement.x -= speed;
-            if (alternate == 0) {
-                playerTexture.loadFromFile("assets/player_left_1.png");
-            } else if (alternate == 1) {
-                playerTexture.loadFromFile("assets/player_left_2.png");
-            } else {
-                playerTexture.loadFromFile("assets/player_left_0.png");
+            switch (alternate) {
+                case 0:
+                    playerTexture.loadFromFile("assets/player_left_1.png");
+                    break;
+                case 1:
+                    playerTexture.loadFromFile("assets/player_left_2.png");
+                    break;
+                default:
+                    playerTexture.loadFromFile("assets/player_left_0.png");
+                    break;
             }
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
             movement.y += speed;
-            if (alternate == 0) {
-                playerTexture.loadFromFile("assets/player_down_1.png");
-            } else if (alternate == 1) {
-                playerTexture.loadFromFile("assets/player_down_2.png");
-            } else {
-                playerTexture.loadFromFile("assets/player_down_0.png");
+            switch (alternate) {
+                case 0:
+                    playerTexture.loadFromFile("assets/player_down_1.png");
+                    break;
+                case 1:
+                    playerTexture.loadFromFile("assets/player_down_2.png");
+                    break;
+                default:
+                    playerTexture.loadFromFile("assets/player_down_0.png");
+                    break;
             }
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             movement.x += speed;
-            if (alternate == 0) {
-                playerTexture.loadFromFile("assets/player_right_1.png");
-            } else if (alternate == 1) {
-                playerTexture.loadFromFile("assets/player_right_2.png");
-            } else {
-                playerTexture.loadFromFile("assets/player_right_0.png");
+            switch (alternate) {
+                case 0:
+                    playerTexture.loadFromFile("assets/player_right_1.png");
+                    break;
+                case 1:
+                    playerTexture.loadFromFile("assets/player_right_2.png");
+                    break;
+                default:
+                    playerTexture.loadFromFile("assets/player_right_0.png");
+                    break;
             }
         }
 
-        if (alternate == 2) {
-            alternate = 0;
-        } else {
-            alternate++;
-        }
+        alternate = (alternate + 1) % 3; // Cycle through 0, 1, 2
 
-        // Update the player sprite texture
         playerSprite.setTexture(playerTexture);
-
         playerPosition += 0.5f * movement;
         playerSprite.setPosition(playerPosition);
 
-        // Update the view to follow the player sprite (centered).
         window.setView(sf::View(sf::FloatRect(playerPosition.x - 152, playerPosition.y - 80, windowWidth/6, windowHeight/6)));
-        // Clear the window.
         window.clear();
 
-        // Draw the tilemap, adjusted based on the player's "position".
         for (int y = 0; y < mapHeight; ++y) {
             for (int x = 0; x < mapWidth; ++x) {
                 int terrainType = tilemap[y][x];
@@ -156,10 +161,7 @@ int main() {
             }
         }
 
-        // Draw the player.
         window.draw(playerSprite);
-
-        // Update the window.
         window.display();
     }
 
