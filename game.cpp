@@ -106,8 +106,7 @@ int main() {
                     playerTexture.loadFromFile("assets/player_up_0.png");
                     break;
             }
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
             movement.x -= speed;
             switch (alternate) {
                 case 0:
@@ -120,8 +119,7 @@ int main() {
                     playerTexture.loadFromFile("assets/player_left_0.png");
                     break;
             }
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
             movement.y += speed;
             switch (alternate) {
                 case 0:
@@ -134,8 +132,7 @@ int main() {
                     playerTexture.loadFromFile("assets/player_down_0.png");
                     break;
             }
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
             movement.x += speed;
             switch (alternate) {
                 case 0:
