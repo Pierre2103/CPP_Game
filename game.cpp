@@ -60,15 +60,16 @@ int main() {
         terrainSprites[i].setTexture(textures[i]);
     }
 
-    window.setView(sf::View(sf::FloatRect(1584, 404, windowWidth/6 , windowHeight/6)));
+    // Set the initial zoom level
+    float zoomLevel = 8.0f;
 
     // Initialize player position at the center of the screen.
-    sf::Vector2f playerPosition(1744, 494);
+    sf::Vector2f playerPosition(158 * tileSize, 28 * tileSize);
+
     // put the player sprite here
     sf::Texture playerTexture;
     playerTexture.loadFromFile("assets/player_down_0.png");
     sf::Sprite playerSprite(playerTexture);
-
 
     // Main game loop.
     while (window.isOpen()) {
@@ -80,6 +81,7 @@ int main() {
             }
         }
 
+        printf("The player is on the tile (%d, %d)\n", (int)playerPosition.x / tileSize, (int)playerPosition.y / tileSize);
         // Movement vector.
         sf::Vector2f movement(0, 0);
 
@@ -145,24 +147,41 @@ int main() {
         alternate = (alternate + 1) % 3; // Cycle through 0, 1, 2
 
         playerSprite.setTexture(playerTexture);
-        playerPosition += 0.5f * movement;
+
+        playerPosition.x += movement.x;
+        playerPosition.y += movement.y;
+
         playerSprite.setPosition(playerPosition);
 
-        window.setView(sf::View(sf::FloatRect(playerPosition.x - 152, playerPosition.y - 80, windowWidth/6, windowHeight/6)));
+        // Calculate the view size based on the window size and the zoom level
+        sf::Vector2f viewSize(windowWidth / zoomLevel, windowHeight / zoomLevel);
+
+        // Create the view centered on the player
+        sf::View view(playerPosition, viewSize);
+
+        // Set the view in the window
+        window.setView(view);
+
+        // Clear the window
         window.clear();
 
+        // Draw the terrain sprites
         for (int y = 0; y < mapHeight; ++y) {
             for (int x = 0; x < mapWidth; ++x) {
                 int terrainType = tilemap[y][x];
                 if (terrainType >= 0 && terrainType < Terrain::NumTerrains) {
-                    terrainSprites[terrainType].setPosition(x * tileSize - playerPosition.x + windowWidth / 2, y * tileSize - playerPosition.y + windowHeight / 2);
+                    terrainSprites[terrainType].setPosition(x * tileSize, y * tileSize);
                     window.draw(terrainSprites[terrainType]);
                 }
             }
         }
 
+        // Draw the player sprite
         window.draw(playerSprite);
+
+        // Display the contents of the window
         window.display();
+
     }
 
     return 0;
