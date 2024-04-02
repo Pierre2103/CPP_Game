@@ -23,7 +23,8 @@ int mapCenterY = mapHeight * tileSize / 2;
 
 int alternate = 0;
 
-enum Terrain {
+enum Terrain
+{
     Grass,
     Water,
     Sand,
@@ -42,7 +43,8 @@ enum Terrain {
 };
 
 // Function to draw a colored bar
-void drawBar(sf::RenderWindow& window, float x, float y, float width, float height, float fillRatio, sf::Color color) {
+void drawBar(sf::RenderWindow &window, float x, float y, float width, float height, float fillRatio, sf::Color color)
+{
     // Draw black outline
     sf::RectangleShape outline(sf::Vector2f(width, height));
     outline.setPosition(x, y);
@@ -58,7 +60,8 @@ void drawBar(sf::RenderWindow& window, float x, float y, float width, float heig
     window.draw(bar);
 }
 
-int main() {
+int main()
+{
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Night 4 Life");
 
     // Load icons
@@ -94,7 +97,8 @@ int main() {
     textures[PlayerSpawn].loadFromFile("assets/PlayerSpawn.png");
 
     std::vector<sf::Sprite> terrainSprites(Terrain::NumTerrains);
-    for (int i = 0; i < Terrain::NumTerrains; ++i) {
+    for (int i = 0; i < Terrain::NumTerrains; ++i)
+    {
         terrainSprites[i].setTexture(textures[i]);
     }
 
@@ -107,17 +111,20 @@ int main() {
     sf::Sprite playerSprite(playerTexture);
 
     // Variables for player stats
-    int playerHealth = 100;
-    int playerThirst = 100;
-    int playerFood = 100;
-    int maxHealth = 100;
-    int maxThirst = 100;
-    int maxFood = 100;
+    int playerHealth = 1000;
+    int playerThirst = 2000;
+    int playerFood = 4000;
+    int maxHealth = 1000;
+    int maxThirst = 2000;
+    int maxFood = 4000;
 
-    while (window.isOpen()) {
+    while (window.isOpen())
+    {
         sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+            {
                 window.close();
             }
         }
@@ -128,63 +135,93 @@ int main() {
         int currentTileY = playerPosition.y / tileSize;
         int currentTileType = tilemap[currentTileY][currentTileX];
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        {
             movement.y -= speed;
-            switch (alternate) {
-                case 0:
-                    playerTexture.loadFromFile("assets/player_up_1.png");
-                    break;
-                case 1:
-                    playerTexture.loadFromFile("assets/player_up_2.png");
-                    break;
-                default:
-                    playerTexture.loadFromFile("assets/player_up_0.png");
-                    break;
+            switch (alternate)
+            {
+            case 0:
+                playerTexture.loadFromFile("assets/player_up_1.png");
+                break;
+            case 3:
+                playerTexture.loadFromFile("assets/player_up_2.png");
+                break;
+            default:
+                playerTexture.loadFromFile("assets/player_up_0.png");
+                break;
             }
-        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q) || sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        {
             movement.x -= speed;
-            switch (alternate) {
-                case 0:
-                    playerTexture.loadFromFile("assets/player_left_1.png");
-                    break;
-                case 1:
-                    playerTexture.loadFromFile("assets/player_left_2.png");
-                    break;
-                default:
-                    playerTexture.loadFromFile("assets/player_left_0.png");
-                    break;
+            switch (alternate)
+            {
+            case 0:
+                playerTexture.loadFromFile("assets/player_left_1.png");
+                break;
+            case 3:
+                playerTexture.loadFromFile("assets/player_left_2.png");
+                break;
+            default:
+                break;
             }
-        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        {
             movement.y += speed;
-            switch (alternate) {
-                case 0:
-                    playerTexture.loadFromFile("assets/player_down_1.png");
-                    break;
-                case 1:
-                    playerTexture.loadFromFile("assets/player_down_2.png");
-                    break;
-                default:
-                    playerTexture.loadFromFile("assets/player_down_0.png");
-                    break;
+            switch (alternate)
+            {
+            case 0:
+                playerTexture.loadFromFile("assets/player_down_1.png");
+                break;
+            case 3:
+                playerTexture.loadFromFile("assets/player_down_2.png");
+                break;
+            default:
+                break;
             }
-        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        {
             movement.x += speed;
-            switch (alternate) {
-                case 0:
-                    playerTexture.loadFromFile("assets/player_right_1.png");
-                    break;
-                case 1:
-                    playerTexture.loadFromFile("assets/player_right_2.png");
-                    break;
-                default:
-                    playerTexture.loadFromFile("assets/player_right_0.png");
-                    break;
+            switch (alternate)
+            {
+            case 0:
+                playerTexture.loadFromFile("assets/player_right_1.png");
+                break;
+            case 3:
+                playerTexture.loadFromFile("assets/player_right_2.png");
+                break;
+            default:
+                break;
             }
         }
 
-        if (currentTileType == Sand) {
+        if (currentTileType == Sand)
+        {
             movement *= 0.65f; // You can adjust the factor as needed.
         }
+
+        // Decrease thirst and hunger when player walks
+        if (movement.x != 0 || movement.y != 0)
+        {
+            playerThirst -= 0.0001f; // Decrease thirst by a smaller value
+            playerFood -= 0.001f;    // Decrease hunger by a larger value
+        }
+
+        // Decrease health if either thirst or hunger is zero
+        if (playerThirst <= 0 || playerFood <= 0)
+        {
+            playerHealth -= 0.001f;
+        }
+
+        // Ensure that playerThirst, playerFood, and playerHealth don't go below 0
+        if (playerThirst < 0)
+            playerThirst = 0;
+        if (playerFood < 0)
+            playerFood = 0;
+        if (playerHealth < 0)
+            playerHealth = 0;
 
         alternate = (alternate + 1) % 6;
 
@@ -193,10 +230,12 @@ int main() {
         sf::Vector2f newPosition = playerPosition + movement;
 
         if (newPosition.x >= 0 && newPosition.x < mapWidth * tileSize &&
-            newPosition.y >= 0 && newPosition.y < mapHeight * tileSize) {
+            newPosition.y >= 0 && newPosition.y < mapHeight * tileSize)
+        {
             int tileX = newPosition.x / tileSize;
             int tileY = newPosition.y / tileSize;
-            if (tilemap[tileY][tileX] != Water) {
+            if (tilemap[tileY][tileX] != Water)
+            {
                 playerPosition = newPosition;
                 playerSprite.setPosition(playerPosition);
             }
@@ -210,11 +249,15 @@ int main() {
 
         window.clear();
 
-        for (int y = 0; y < mapHeight; ++y) {
-            for (int x = 0; x < mapWidth; ++x) {
+        for (int y = 0; y < mapHeight; ++y)
+        {
+            for (int x = 0; x < mapWidth; ++x)
+            {
                 int terrainType = tilemap[y][x];
-                if (terrainType >= 0 && terrainType < Terrain::NumTerrains) {
-                    if (terrainType == Tree || terrainType == Firecamp) {
+                if (terrainType >= 0 && terrainType < Terrain::NumTerrains)
+                {
+                    if (terrainType == Tree || terrainType == Firecamp)
+                    {
                         int grassType = Grass;
                         terrainSprites[grassType].setPosition(x * tileSize, y * tileSize);
                         window.draw(terrainSprites[grassType]);
