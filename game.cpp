@@ -1,3 +1,4 @@
+#include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <array>
 #include <vector>
@@ -23,6 +24,9 @@ int mapCenterY = mapHeight * tileSize / 2;
 
 int alternate = 0;
 
+bool isInventoryOpen = false;
+
+// Enumeration for the terrain types.
 enum Terrain
 {
     Grass,
@@ -58,6 +62,19 @@ void drawBar(sf::RenderWindow &window, float x, float y, float width, float heig
     bar.setPosition(x, y);
     bar.setFillColor(color);
     window.draw(bar);
+}
+
+// sf::Font font;
+// font.loadFromFile("assets/REM-Medium.ttf");
+
+void drawInventory(sf::RenderWindow &window)
+{
+    // Draw the inventory, just a black rectangle with red ouline for testing
+    sf::RectangleShape inventory(sf::Vector2f(200, 200));
+    inventory.setFillColor(sf::Color::White);
+    inventory.setOutlineColor(sf::Color::Red);
+    inventory.setOutlineThickness(1);
+    inventory.setPosition(300, 200);
 }
 
 int main()
@@ -129,12 +146,33 @@ int main()
             }
         }
 
+        if (event.type == sf::Event::KeyPressed)
+        {
+            if (event.key.code == sf::Keyboard::I)
+            {
+                // Toggle inventory only on key press
+                isInventoryOpen = !isInventoryOpen;
+
+                if (isInventoryOpen)
+                {
+                    std::cout << "Inventory is open" << std::endl;
+                }
+                else
+                {
+                    std::cout << "Inventory is closed" << std::endl;
+                }
+            }
+        }
+
+        // Movement vector.
         sf::Vector2f movement(0, 0);
 
         int currentTileX = playerPosition.x / tileSize;
         int currentTileY = playerPosition.y / tileSize;
         int currentTileType = tilemap[currentTileY][currentTileX];
 
+        // Handle input to move the map (and thus the player appears to move).
+        // Move the player sprite and change its texture accordingly between 2 frames.
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
         {
             movement.y -= speed;
@@ -197,8 +235,10 @@ int main()
             }
         }
 
+        // Check if the current tile is sand and adjust speed accordingly.
         if (currentTileType == Sand)
         {
+            // Reduce the speed on sand tiles.
             movement *= 0.65f; // You can adjust the factor as needed.
         }
 
@@ -232,10 +272,12 @@ int main()
         if (newPosition.x >= 0 && newPosition.x < mapWidth * tileSize &&
             newPosition.y >= 0 && newPosition.y < mapHeight * tileSize)
         {
+            // Check if the new position is on a water tile (assuming water tiles are represented by value 1)
             int tileX = newPosition.x / tileSize;
             int tileY = newPosition.y / tileSize;
             if (tilemap[tileY][tileX] != Water)
             {
+                // Move the player to the new position
                 playerPosition = newPosition;
                 playerSprite.setPosition(playerPosition);
             }
@@ -249,6 +291,12 @@ int main()
 
         window.clear();
 
+        if (isInventoryOpen)
+        {
+            drawInventory(window);
+        }
+
+        // Draw the terrain sprites with trees layered over grass
         for (int y = 0; y < mapHeight; ++y)
         {
             for (int x = 0; x < mapWidth; ++x)
@@ -256,9 +304,10 @@ int main()
                 int terrainType = tilemap[y][x];
                 if (terrainType >= 0 && terrainType < Terrain::NumTerrains)
                 {
+                    // If the terrain is a tree or a firecamp, draw the grass first
                     if (terrainType == Tree || terrainType == Firecamp)
                     {
-                        int grassType = Grass;
+                        int grassType = Grass; // Assuming grass is represented by 0
                         terrainSprites[grassType].setPosition(x * tileSize, y * tileSize);
                         window.draw(terrainSprites[grassType]);
                     }
@@ -291,6 +340,7 @@ int main()
         drawBar(window, barX, barY + barHeight + 5, barWidth, barHeight, static_cast<float>(playerThirst) / maxThirst, thirstColor);
         drawBar(window, barX, barY + 2 * (barHeight + 5), barWidth, barHeight, static_cast<float>(playerFood) / maxFood, foodColor);
 
+        // Display the contents of the window
         window.display();
     }
 
