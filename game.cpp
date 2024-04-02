@@ -7,13 +7,22 @@
 const int windowWidth = 1920;
 const int windowHeight = 1080;
 const int speed = 3;
+const int barWidth = 50; // Width of each bar
+const int barHeight = 5; // Height of each bar
+
+// Colors for the bars:
+// Mix between pink and red for the health bar
+// Light blue for thirst
+// Orange for food
+const sf::Color healthColor(255, 0, 0);
+const sf::Color thirstColor(0, 255, 255);
+const sf::Color foodColor(255, 165, 0);
 
 int mapCenterX = mapWidth * tileSize / 2;
 int mapCenterY = mapHeight * tileSize / 2;
 
 int alternate = 0;
 
-// Enumeration for the terrain types.
 enum Terrain {
     Grass,
     Water,
@@ -29,16 +38,46 @@ enum Terrain {
     ShelterWalls,
     AnimalSpawner,
     PlayerSpawn,
-    NumTerrains // This will give us the number of terrains.
+    NumTerrains
 };
 
+// Function to draw a colored bar
+void drawBar(sf::RenderWindow& window, float x, float y, float width, float height, float fillRatio, sf::Color color) {
+    // Draw black outline
+    sf::RectangleShape outline(sf::Vector2f(width, height));
+    outline.setPosition(x, y);
+    outline.setFillColor(sf::Color::Transparent);
+    outline.setOutlineThickness(1); // Adjust outline thickness as needed
+    outline.setOutlineColor(sf::Color::Black);
+    window.draw(outline);
+
+    // Draw filled bar
+    sf::RectangleShape bar(sf::Vector2f(width * fillRatio, height));
+    bar.setPosition(x, y);
+    bar.setFillColor(color);
+    window.draw(bar);
+}
+
 int main() {
-    // Create the main window.
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Night 4 Life");
 
-    // Load textures.
+    // Load icons
+    sf::Texture hungerIconTexture;
+    hungerIconTexture.loadFromFile("assets/hunger.png");
+    sf::Sprite hungerIcon(hungerIconTexture);
+    hungerIcon.setScale(0.5f, 0.5f); // Reduce icon size
+
+    sf::Texture lifeIconTexture;
+    lifeIconTexture.loadFromFile("assets/life.png");
+    sf::Sprite lifeIcon(lifeIconTexture);
+    lifeIcon.setScale(0.5f, 0.5f); // Reduce icon size
+
+    sf::Texture thirstIconTexture;
+    thirstIconTexture.loadFromFile("assets/thirst.png");
+    sf::Sprite thirstIcon(thirstIconTexture);
+    thirstIcon.setScale(0.5f, 0.5f); // Reduce icon size
+
     std::vector<sf::Texture> textures(Terrain::NumTerrains);
-    // Load textures for each terrain type...
     textures[Grass].loadFromFile("assets/grass.png");
     textures[Water].loadFromFile("assets/water.png");
     textures[Sand].loadFromFile("assets/sand.png");
@@ -54,26 +93,28 @@ int main() {
     textures[AnimalSpawner].loadFromFile("assets/no_texture.png");
     textures[PlayerSpawn].loadFromFile("assets/PlayerSpawn.png");
 
-    // Create sprites for each terrain type.
     std::vector<sf::Sprite> terrainSprites(Terrain::NumTerrains);
     for (int i = 0; i < Terrain::NumTerrains; ++i) {
         terrainSprites[i].setTexture(textures[i]);
     }
 
-    // Set the initial zoom level
     float zoomLevel = 8.0f;
 
-    // Initialize player position at the center of the screen.
     sf::Vector2f playerPosition(158 * tileSize, 28 * tileSize);
 
-    // put the player sprite here
     sf::Texture playerTexture;
     playerTexture.loadFromFile("assets/player_down_0.png");
     sf::Sprite playerSprite(playerTexture);
 
-    // Main game loop.
+    // Variables for player stats
+    int playerHealth = 100;
+    int playerThirst = 100;
+    int playerFood = 100;
+    int maxHealth = 100;
+    int maxThirst = 100;
+    int maxFood = 100;
+
     while (window.isOpen()) {
-        // Handle events.
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
@@ -81,18 +122,12 @@ int main() {
             }
         }
 
-        // printf("The player is on the tile (%d, %d)\n", (int)playerPosition.x / tileSize, (int)playerPosition.y / tileSize);
-
-        // Movement vector.
         sf::Vector2f movement(0, 0);
 
-        // Determine the tile the player is standing on.
         int currentTileX = playerPosition.x / tileSize;
         int currentTileY = playerPosition.y / tileSize;
         int currentTileType = tilemap[currentTileY][currentTileX];
 
-        // Handle input to move the map (and thus the player appears to move).
-        // Move the player sprite and change its texture accordingly between 2 frames.
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             movement.y -= speed;
             switch (alternate) {
@@ -147,66 +182,72 @@ int main() {
             }
         }
 
-        // Check if the current tile is sand and adjust speed accordingly.
         if (currentTileType == Sand) {
-            // Reduce the speed on sand tiles.
             movement *= 0.65f; // You can adjust the factor as needed.
         }
 
-        alternate = (alternate + 1) % 6; // Cycle through 0, 1, 2
+        alternate = (alternate + 1) % 6;
 
         playerSprite.setTexture(playerTexture);
 
-        // Calculate the potential new position of the player
         sf::Vector2f newPosition = playerPosition + movement;
 
-        // Check if the new position is within the map boundaries
         if (newPosition.x >= 0 && newPosition.x < mapWidth * tileSize &&
             newPosition.y >= 0 && newPosition.y < mapHeight * tileSize) {
-            // Check if the new position is on a water tile (assuming water tiles are represented by value 1)
             int tileX = newPosition.x / tileSize;
             int tileY = newPosition.y / tileSize;
             if (tilemap[tileY][tileX] != Water) {
-                // Move the player to the new position
                 playerPosition = newPosition;
                 playerSprite.setPosition(playerPosition);
             }
         }
 
-        // Calculate the view size based on the window size and the zoom level
         sf::Vector2f viewSize(windowWidth / zoomLevel, windowHeight / zoomLevel);
 
-        // Create the view centered on the player
         sf::View view(playerPosition, viewSize);
 
-        // Set the view in the window
         window.setView(view);
 
-        // Clear the window
         window.clear();
 
-        // Draw the terrain sprites with trees layered over grass
         for (int y = 0; y < mapHeight; ++y) {
             for (int x = 0; x < mapWidth; ++x) {
                 int terrainType = tilemap[y][x];
                 if (terrainType >= 0 && terrainType < Terrain::NumTerrains) {
-                    // If the terrain is a tree or a firecamp, draw the grass first
                     if (terrainType == Tree || terrainType == Firecamp) {
-                        int grassType = Grass; // Assuming grass is represented by 0
+                        int grassType = Grass;
                         terrainSprites[grassType].setPosition(x * tileSize, y * tileSize);
                         window.draw(terrainSprites[grassType]);
                     }
-                    // Draw the terrain sprite
                     terrainSprites[terrainType].setPosition(x * tileSize, y * tileSize);
                     window.draw(terrainSprites[terrainType]);
                 }
             }
         }
 
-        // Draw the player sprite
+        // Update the positions of the bars and icons to follow the player
+        float barX = playerPosition.x - windowWidth / (6 * zoomLevel) - 65;
+        float barY = playerPosition.y - windowHeight / (6 * zoomLevel) - 40;
+        float iconX = barX - 10; // Adjust the distance between the icon and the bar as needed
+
+        // Draw player sprite, icons, and bars
         window.draw(playerSprite);
 
-        // Display the contents of the window
+        // Draw icons
+        lifeIcon.setPosition(iconX, barY - 2);
+        window.draw(lifeIcon);
+
+        thirstIcon.setPosition(iconX, barY - 2 + barHeight + 5);
+        window.draw(thirstIcon);
+
+        hungerIcon.setPosition(iconX, barY - 2 + 2 * (barHeight + 5));
+        window.draw(hungerIcon);
+
+        // Draw bars
+        drawBar(window, barX, barY, barWidth, barHeight, static_cast<float>(playerHealth) / maxHealth, healthColor);
+        drawBar(window, barX, barY + barHeight + 5, barWidth, barHeight, static_cast<float>(playerThirst) / maxThirst, thirstColor);
+        drawBar(window, barX, barY + 2 * (barHeight + 5), barWidth, barHeight, static_cast<float>(playerFood) / maxFood, foodColor);
+
         window.display();
     }
 
