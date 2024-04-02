@@ -153,7 +153,7 @@ int main() {
             movement *= 0.65f; // You can adjust the factor as needed.
         }
 
-        alternate = (alternate + 1) % 3; // Cycle through 0, 1, 2
+        alternate = (alternate + 1) % 6; // Cycle through 0, 1, 2
 
         playerSprite.setTexture(playerTexture);
 
@@ -166,7 +166,7 @@ int main() {
             // Check if the new position is on a water tile (assuming water tiles are represented by value 1)
             int tileX = newPosition.x / tileSize;
             int tileY = newPosition.y / tileSize;
-            if (tilemap[tileY][tileX] != Water && tilemap[tileY][tileX] != Tree) {
+            if (tilemap[tileY][tileX] != Water) {
                 // Move the player to the new position
                 playerPosition = newPosition;
                 playerSprite.setPosition(playerPosition);
