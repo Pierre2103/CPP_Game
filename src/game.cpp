@@ -3,7 +3,7 @@
 #include <array>
 #include <vector>
 #include <iostream>
-#include "map.hpp"
+#include "../lib/map.hpp"
 
 const int windowWidth = 1920;
 const int windowHeight = 1080;
@@ -63,7 +63,6 @@ void drawBar(sf::RenderWindow &window, float x, float y, float width, float heig
     bar.setFillColor(color);
     window.draw(bar);
 };
-
 
 // draw a big rectangle for the inventory just for testing
 void drawInventory(sf::RenderWindow &window)
@@ -262,6 +261,18 @@ int main()
             playerHealth -= 0.001f;
         };
 
+        // End the game if player health is zero by closing the window and displaying a game over message in ASCII art
+        if (playerHealth <= 0)
+        {
+            window.close();
+            std::cout << "  _____          __  __ ______    ______      ________ _____  " << std::endl;
+            std::cout << " / ____|   /\\   |  \\/  |  ____|  / __ \\ \\    / /  ____|  __ \\ " << std::endl;
+            std::cout << "| |  __   /  \\  | \\  / | |__    | |  | \\ \\  / /| |__  | |__) |" << std::endl;
+            std::cout << "| | |_ | / /\\ \\ | |\\/| |  __|   | |  | |\\ \\/ / |  __| |  _  / " << std::endl;
+            std::cout << "| |__| |/ ____ \\| |  | | |____  | |__| | \\  /  | |____| | \\ \\ " << std::endl;
+            std::cout << " \\_____/_/    \\_\\_|  |_|______|  \\____/   \\/   |______|_|  \\_\\ " << std::endl;
+        }
+
         // Ensure that playerThirst, playerFood, and playerHealth don't go below 0
         if (playerThirst < 0)
             playerThirst = 0;
@@ -353,8 +364,6 @@ int main()
         {
             std::cout << "Inventory is closed" << std::endl;
         };
-
-
 
         // Display the contents of the window
         window.display();
