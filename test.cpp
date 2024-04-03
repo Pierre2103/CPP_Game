@@ -26,6 +26,7 @@ int main() {
 
             // Check for key press event
             if (event.type == sf::Event::KeyPressed) {
+                std::cout << "Key pressed: " << event.key.code << std::endl;
                 if (event.key.code == sf::Keyboard::I) {
                     // Toggle inventory only on key press
                     isInventoryOpen = !isInventoryOpen;
