@@ -88,7 +88,7 @@ void drawBar(sf::RenderWindow &window, float x, float y, float width, float heig
     sf::RectangleShape outline(sf::Vector2f(width, height));
     outline.setPosition(x, y);
     outline.setFillColor(sf::Color::Transparent);
-    outline.setOutlineThickness(1); // Adjust outline thickness as needed
+    outline.setOutlineThickness(6); // Adjust outline thickness as needed
     outline.setOutlineColor(sf::Color::Black);
     window.draw(outline);
 
@@ -215,13 +215,13 @@ void updateAnimals() {
             }
 
             if (animal.iteration < animal.moveDistance) {
-                if (animal.direction == 0 && y > 0 && tilemap[y - 1][x] != Water) {
+                if (animal.direction == 0 && y > 0 && tilemap[y - 1][x] != Water && tilemap[y - 1][x] != ShelterWalls) {
                     animal.sprite.move(0, -animal.animalSpeed);
-                } else if (animal.direction == 1 && y < (mapHeight - 1) && tilemap[y + 1][x] != Water) {
+                } else if (animal.direction == 1 && y < (mapHeight - 1) && tilemap[y + 1][x] != Water && tilemap[y + 1][x] != ShelterWalls) {
                     animal.sprite.move(0, animal.animalSpeed);
-                } else if (animal.direction == 2 && x > 0 && tilemap[y][x - 1] != Water) {
+                } else if (animal.direction == 2 && x > 0 && tilemap[y][x - 1] != Water && tilemap[y][x - 1] != ShelterWalls) {
                     animal.sprite.move(-animal.animalSpeed, 0);
-                } else if (animal.direction == 3 && x < (mapWidth - 1) && tilemap[y][x + 1] != Water) {
+                } else if (animal.direction == 3 && x < (mapWidth - 1) && tilemap[y][x + 1] != Water && tilemap[y][x + 1] != ShelterWalls) {
                     animal.sprite.move(animal.animalSpeed, 0);
                 }
                 animal.iteration++; // Increment the iteration each frame the animal moves
@@ -255,17 +255,17 @@ int main()
     sf::Texture hungerIconTexture;
     hungerIconTexture.loadFromFile("assets/hunger.png");
     sf::Sprite hungerIcon(hungerIconTexture);
-    hungerIcon.setScale(2.5f, 2.5f); // Reduce icon size
+    hungerIcon.setScale(3.f, 3.f); // Reduce icon size
 
     sf::Texture lifeIconTexture;
     lifeIconTexture.loadFromFile("assets/life.png");
     sf::Sprite lifeIcon(lifeIconTexture);
-    lifeIcon.setScale(2.5f, 2.5f); // Reduce icon size
+    lifeIcon.setScale(3.f, 3.f); // Reduce icon size
 
     sf::Texture thirstIconTexture;
     thirstIconTexture.loadFromFile("assets/thirst.png");
     sf::Sprite thirstIcon(thirstIconTexture);
-    thirstIcon.setScale(2.5f, 2.5f); // Reduce icon size
+    thirstIcon.setScale(3.f, 3.f); // Reduce icon size
 
     std::vector<sf::Texture> textures(Terrain::NumTerrains);
     textures[Grass].loadFromFile("assets/grass.png");
@@ -610,30 +610,6 @@ int main()
 
         alternate = (alternate + 1) % 6;
 
-        playerSprite.setTexture(playerTexture);
-
-        sf::Vector2f newPosition = playerPosition + movement;
-
-        if (newPosition.x >= 0 && newPosition.x < mapWidth * tileSize &&
-            newPosition.y >= 0 && newPosition.y < mapHeight * tileSize)
-        {
-            // Check if the new position is on a water tile (assuming water tiles are represented by value 1) or a fence
-            int tileX = newPosition.x / tileSize;
-            int tileY = newPosition.y / tileSize;
-            if (tilemap[tileY][tileX] != Water && tilemap[tileY][tileX] != ShelterWalls)
-            {
-            // Move the player to the new position
-                playerPosition = newPosition;
-                playerSprite.setPosition(playerPosition);
-            };
-        };
-
-        sf::Vector2f viewSize(windowWidth / zoomLevel, windowHeight / zoomLevel);
-
-        sf::View view(playerPosition, viewSize);
-
-
-
         updateAnimals();
 
         window.clear();
@@ -744,18 +720,18 @@ int main()
 window.setView(uiBarsView);
 
 // Position and scale of icons should be adapted based on the size of the view or window
-float iconX = 50; // Adjust based on your UI layout
+float iconX = 35; // Adjust based on your UI layout
 float barY = 20; // Starting Y position for the bars
 float barHeight = 35; // Example bar height
-float barWidth = window.getSize().x / 5; // Example bar width, adjust as needed
-float barX = iconX + hungerIcon.getGlobalBounds().width + 20; // Position bar next to the icon
+float barWidth = window.getSize().x / 5 + 5; // Example bar width, adjust as needed
+float barX = iconX + hungerIcon.getGlobalBounds().width + 15; // Position bar next to the icon
 
 // Now draw your UI elements as before, they will be positioned relative to the UI view
 // Icons
-lifeIcon.setPosition(iconX, barY - 2);
+lifeIcon.setPosition(iconX, barY);
 window.draw(lifeIcon);
 
-thirstIcon.setPosition(iconX, barY - 2 + barHeight + 20);
+thirstIcon.setPosition(iconX, barY + barHeight + 20);
 window.draw(thirstIcon);
 
 hungerIcon.setPosition(iconX, barY - 2 + 2 * (barHeight + 20));
@@ -763,11 +739,33 @@ window.draw(hungerIcon);
 
 // Bars
 drawBar(window, barX, barY, barWidth, barHeight, static_cast<float>(playerHealth) / maxHealth, healthColor);
-drawBar(window, barX, barY + barHeight + 20, barWidth, barHeight, static_cast<float>(playerThirst) / maxThirst, thirstColor);
-drawBar(window, barX, barY + 2 * (barHeight + 20), barWidth, barHeight, static_cast<float>(playerFood) / maxFood, foodColor);
+drawBar(window, barX, barY + barHeight + 25, barWidth, barHeight, static_cast<float>(playerThirst) / maxThirst, thirstColor);
+drawBar(window, barX, barY + 2 * (barHeight + 25), barWidth, barHeight, static_cast<float>(playerFood) / maxFood, foodColor);
 
-// If you have a game view for rendering the world or characters, set it back here
-// window.setView(gameView);
+// After drawing UI elements, switch back to the game world view
+sf::Vector2f viewSize(windowWidth / zoomLevel, windowHeight / zoomLevel);
+sf::View gameView(playerPosition, viewSize); // Create a view centered on the player
+window.setView(gameView); // Set the window view to the game world view
+
+// Now that the view is set back to the game world, you can draw the player and other game elements
+playerSprite.setTexture(playerTexture);
+
+sf::Vector2f newPosition = playerPosition + movement;
+
+if (newPosition.x >= 0 && newPosition.x < mapWidth * tileSize &&
+    newPosition.y >= 0 && newPosition.y < mapHeight * tileSize) {
+    // Check if the new position is on a water tile or a fence
+    int tileX = newPosition.x / tileSize;
+    int tileY = newPosition.y / tileSize;
+    if (tilemap[tileY][tileX] != Water && tilemap[tileY][tileX] != ShelterWalls) {
+        // Move the player to the new position
+        playerPosition = newPosition;
+        playerSprite.setPosition(playerPosition);
+    }
+}
+
+// Finally, draw the player
+window.draw(playerSprite);
 
 
         float inventoryX_ = 37;
@@ -1087,6 +1085,7 @@ drawBar(window, barX, barY + 2 * (barHeight + 20), barWidth, barHeight, static_c
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
                 {
                     displayCaptionText(window, font, "The blackbox has been opened", sf::Vector2f(500, 750));
+                    // WIN CONDITION HERE
                 }
             }
             else
@@ -1095,7 +1094,7 @@ drawBar(window, barX, barY + 2 * (barHeight + 20), barWidth, barHeight, static_c
             }
         }
 
-        window.setView(view);
+        window.setView(gameView);
 
         // Display the contents of the window
         window.display();
