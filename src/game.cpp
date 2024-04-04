@@ -7,7 +7,7 @@
 
 const int windowWidth = 1920;
 const int windowHeight = 1080;
-const int speed = 25;    // standard is 3
+const int speed = 4;    // standard is 4
 const int barWidth = 50; // Width of each bar
 const int barHeight = 5; // Height of each bar
 
@@ -143,7 +143,7 @@ void fillInventory()
 
     Item wood;
     wood.name = "Wood";
-    wood.quantity = 150;
+    wood.quantity = 0;
     inventory.push_back(wood);
 
     Item water;
@@ -369,8 +369,6 @@ int main()
             };
         };
 
-        // animate the lava tiles by changing the texture rect the texture dimensions are 16x320 and the frame is 16x16 don't forget to redraw the lava tiles everywhere in the map
-
         // Movement vector.
         sf::Vector2f movement(0, 0);
 
@@ -426,7 +424,6 @@ int main()
                 playerFood -= 20.0f;  // Decrease hunger when player chops a tree
                 playerThirst -= 5.0f; // Decrease thirst when player chops a tree
 
-                // Pass the tree tile to the following stage
                 // Increment the current tile's value, and handle wrapping around if necessary
                 tilemap[currentTileY][currentTileX]++; // Increment current tile
 
@@ -599,12 +596,12 @@ int main()
             // Check if the new position is on a water tile (assuming water tiles are represented by value 1) or a fence
             int tileX = newPosition.x / tileSize;
             int tileY = newPosition.y / tileSize;
-            // if (tilemap[tileY][tileX] != Water && tilemap[tileY][tileX] != ShelterWalls)
-            // {
+            if (tilemap[tileY][tileX] != Water && tilemap[tileY][tileX] != ShelterWalls)
+            {
             // Move the player to the new position
-            playerPosition = newPosition;
-            playerSprite.setPosition(playerPosition);
-            // };
+                playerPosition = newPosition;
+                playerSprite.setPosition(playerPosition);
+            };
         };
 
         sf::Vector2f viewSize(windowWidth / zoomLevel, windowHeight / zoomLevel);
@@ -717,6 +714,8 @@ int main()
         {
             window.draw(key3Sprite);
         }
+
+        drawAnimals(window);
 
         // Draw player sprite, icons, and bars
         window.draw(playerSprite);
@@ -1000,54 +999,6 @@ int main()
             }
         }
 
-        // if (animalClock.getElapsedTime().asSeconds() >= 0.25f)
-        // {
-        //     animalClock.restart();
-        //     frame = (frame + 1) % 4; // Assuming you have 4 frames to cycle through
-        //     animalSprite.setTextureRect(sf::IntRect(frame * 16, 0, 16, 16));
-
-        //     static int direction = -1; // Initialize to an invalid value to indicate no direction is currently chosen
-        //     static int iteration = 0;
-        //     static int animalSpeed = 2;         // Consider using a float for smoother movement
-        //     static const int moveDistance = 10; // Distance to move in one direction
-
-        //     // Assuming these are set correctly each frame
-        //     int x = animalSprite.getPosition().x / tileSize;
-        //     int y = animalSprite.getPosition().y / tileSize;
-
-        //     // Only choose a new direction and reset the movement if the previous movement is complete
-        //     if (iteration >= moveDistance)
-        //     {
-        //         direction = rand() % 4;
-        //         iteration = 0; // Reset for the next movement
-        //     }
-
-        //     // Movement logic adjusted for smooth transition
-        //     if (iteration < moveDistance)
-        //     {
-        //         if (direction == 0 && y > 0 && tilemap[y - 1][x] != Water)
-        //         {
-        //             animalSprite.move(0, -animalSpeed);
-        //         }
-        //         else if (direction == 1 && y < (mapHeight - 1) && tilemap[y + 1][x] != Water)
-        //         {
-        //             animalSprite.move(0, animalSpeed);
-        //         }
-        //         else if (direction == 2 && x > 0 && tilemap[y][x - 1] != Water)
-        //         {
-        //             animalSprite.move(-animalSpeed, 0);
-        //         }
-        //         else if (direction == 3 && x < (mapWidth - 1) && tilemap[y][x + 1] != Water)
-        //         {
-        //             animalSprite.move(animalSpeed, 0);
-        //         }
-        //         iteration++; // Increment the iteration each frame the animal moves
-        //     }
-        // }
-        // window.draw(animalSprite);
-
-
-        drawAnimals(window);
 
         // detect if the player is near the key1 (between 190, 85 and 192, 87) then display a message to press 'E' to pick up the key and pass the hasKey1 to true
         if (currentTileX >= 199 && currentTileX <= 201 && currentTileY >= 108 && currentTileY <= 110)
