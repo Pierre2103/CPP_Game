@@ -15,9 +15,11 @@ const int barHeight = 5; // Height of each bar
 // Mix between pink and red for the health bar
 // Light blue for thirst
 // Orange for food
-const sf::Color healthColor(136, 8, 8);
-const sf::Color thirstColor(36, 157, 159);
-const sf::Color foodColor(255, 165, 0);
+const sf::Color healthColor(136, 8, 8, 220);
+const sf::Color thirstColor(36, 157, 159, 220);
+const sf::Color foodColor(255, 165, 0, 220);
+
+const sf::Color inventoryColor(0, 0, 0, 200);
 
 int mapCenterX = mapWidth * tileSize / 2;
 int mapCenterY = mapHeight * tileSize / 2;
@@ -25,6 +27,20 @@ int mapCenterY = mapHeight * tileSize / 2;
 int alternate = 0;
 
 bool isInventoryOpen = false;
+
+// inventory logic here
+struct Item
+{
+    std::string name;
+    int quantity;
+};
+
+std::vector<Item> inventory;
+
+float inventoryX = 0;
+float inventoryY = 0;
+float inventoryWidth = 0;
+float inventoryHeight = 0;
 
 // Enumeration for the terrain types.
 enum Terrain
@@ -65,18 +81,72 @@ void drawBar(sf::RenderWindow &window, float x, float y, float width, float heig
 };
 
 // draw a big rectangle for the inventory just for testing
-void drawInventory(sf::RenderWindow &window)
+void drawInventory(sf::RenderWindow &window, float x, float y, float width, float height, sf::Color color, sf::Font &font)
 {
-    sf::RectangleShape inventory(sf::Vector2f(300, 300));
-    inventory.setPosition(100, 100);
-    inventory.setFillColor(sf::Color::White);
-    inventory.setOutlineThickness(2);
-    inventory.setOutlineColor(sf::Color::Black);
-    window.draw(inventory);
+    sf::View originalView = window.getView();
+
+    sf::View uiView(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
+    window.setView(uiView);
+
+    sf::RectangleShape inventoryBackground(sf::Vector2f(width, height));
+    inventoryBackground.setPosition(x, y);
+    inventoryBackground.setFillColor(color);
+    window.draw(inventoryBackground);
+
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(24);
+    text.setFillColor(sf::Color::White);
+
+    // if item is wood, display wood icon (assets/item_wood.png) use a for loop to display icon
+
+
+    for (size_t i = 0; i < inventory.size(); ++i)
+    {
+        //add the item icon here
+        text.setString(inventory[i].name + " : " + std::to_string(inventory[i].quantity));
+        text.setPosition(std::round(x + 10), std::round(y + 10 + i * 30));
+        window.draw(text);
+
+        switch (i)
+        {
+        case 0:
+            sf::Texture itemTexture1;
+            // set the size at 32x32
+            itemTexture1.loadFromFile("assets/item_wood.png");
+            sf::Sprite itemSprite1(itemTexture1);
+            itemSprite1.setPosition(x + 10, y + 10 + i * 30);
+            window.draw(itemSprite1);
+            break;
+        }
+    }
+
+    window.setView(originalView);
+}
+
+// for test only /!\ to remove
+void fillInventory()
+{
+    Item item1;
+    item1.name = "apple";
+    item1.quantity = 5;
+    inventory.push_back(item1);
+
+    Item item2;
+    item2.name = "wood";
+    item2.quantity = 3;
+    inventory.push_back(item2);
+
+    Item item3;
+    item3.name = "water bottle";
+    item3.quantity = 1;
+    inventory.push_back(item3);
 };
 
 int main()
 {
+    fillInventory();
+
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Night 4 Life");
 
     // Load icons
@@ -119,7 +189,8 @@ int main()
 
     float zoomLevel = 8.0f;
 
-    sf::Vector2f playerPosition(158 * tileSize, 28 * tileSize);
+    // sf::Vector2f playerPosition(158 * tileSize, 28 * tileSize);
+    sf::Vector2f playerPosition(3*tileSize, 3*tileSize);
 
     sf::Texture playerTexture;
     playerTexture.loadFromFile("assets/player_down_0.png");
@@ -146,22 +217,11 @@ int main()
             // handle key press event
             if (event.type == sf::Event::KeyPressed)
             {
-                std::cout << "Key pressed: " << event.key.code << std::endl;
-
                 // Check if the key pressed is 'I'
                 if (event.key.code == sf::Keyboard::I)
                 {
                     // Toggle inventory only on key press
                     isInventoryOpen = !isInventoryOpen;
-
-                    // if (isInventoryOpen)
-                    // {
-                    //     std::cout << "Inventory is open" << std::endl;
-                    // }
-                    // else
-                    // {
-                    //     std::cout << "Inventory is closed" << std::endl;
-                    // };
                 };
             };
         };
@@ -293,12 +353,12 @@ int main()
             // Check if the new position is on a water tile (assuming water tiles are represented by value 1)
             int tileX = newPosition.x / tileSize;
             int tileY = newPosition.y / tileSize;
-            if (tilemap[tileY][tileX] != Water)
-            {
+            // if (tilemap[tileY][tileX] != Water)
+            // {
                 // Move the player to the new position
                 playerPosition = newPosition;
                 playerSprite.setPosition(playerPosition);
-            };
+            // };
         };
 
         sf::Vector2f viewSize(windowWidth / zoomLevel, windowHeight / zoomLevel);
@@ -353,12 +413,30 @@ int main()
         drawBar(window, barX, barY + barHeight + 5, barWidth, barHeight, static_cast<float>(playerThirst) / maxThirst, thirstColor);
         drawBar(window, barX, barY + 2 * (barHeight + 5), barWidth, barHeight, static_cast<float>(playerFood) / maxFood, foodColor);
 
-        drawInventory(window);
+        // float inventoryX_ = playerPosition.x - windowWidth / (6 * zoomLevel) - 66;
+        // float inventoryY_ = playerPosition.y - windowHeight / (6 * zoomLevel) - 10;
 
+        float inventoryX_ = 37;
+        float inventoryY_ = 206;
+        float inventoryWidth_ = 360;
+        float inventoryHeight_ = 625;
+
+        inventoryX = inventoryX_;
+        inventoryY = inventoryY_;
+        inventoryWidth = inventoryWidth_;
+        inventoryHeight = inventoryHeight_;
+
+        sf::Font font;
+        if (!font.loadFromFile("assets/REM-Medium.ttf"))
+        {
+            std::cout << "Error loading font" << std::endl;
+            return -1;
+        }
+
+        // Draw the inventory
         if (isInventoryOpen)
         {
-            std::cout << "Inventory is open" << std::endl;
-            // drawInventory(window);
+            drawInventory(window, inventoryX, inventoryY, inventoryWidth, inventoryHeight, inventoryColor, font);
         }
         else
         {
