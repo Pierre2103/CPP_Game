@@ -7,7 +7,7 @@
 
 const int windowWidth = 1920;
 const int windowHeight = 1080;
-const int speed = 3;
+const int speed = 3; // standard is 3, debug is 7
 const int barWidth = 50; // Width of each bar
 const int barHeight = 5; // Height of each bar
 
@@ -448,9 +448,9 @@ int main()
             int tileY = newPosition.y / tileSize;
             if (tilemap[tileY][tileX] != Water)
             {
-            // Move the player to the new position
-            playerPosition = newPosition;
-            playerSprite.setPosition(playerPosition);
+                // Move the player to the new position
+                playerPosition = newPosition;
+                playerSprite.setPosition(playerPosition);
             };
         };
 
@@ -536,19 +536,18 @@ int main()
             // std::cout << "Inventory is closed" << std::endl;
         };
 
-        // // function to display the tiles coordinates
-        // sf::Text text;
-        // text.setFont(font);
-        // text.setCharacterSize(24);
-        // text.setFillColor(sf::Color::White);
-        // text.setString("X: " + std::to_string(currentTileX) + " Y: " + std::to_string(currentTileY));
-        // text.setPosition(playerPosition.x - 50, playerPosition.y - 50);
-        // window.draw(text);
+        // function to display the tiles coordinates
+        sf::Text text;
+        text.setFont(font);
+        text.setCharacterSize(24);
+        text.setFillColor(sf::Color::White);
+        text.setString("X: " + std::to_string(currentTileX) + " Y: " + std::to_string(currentTileY));
+        text.setPosition(playerPosition.x - 50, playerPosition.y - 50);
+        window.draw(text);
 
         // ======
         // Beginning of bridge 1 crafting function
         // ======
-
         if (currentTileX >= 182 && currentTileX <= 187 && currentTileY >= 95 && currentTileY <= 99) //trigger zone
         {
             if (!bridge1Crafted)
@@ -615,6 +614,204 @@ int main()
         // ======
         // End of bridge 1 crafting function
         // ======
+
+        // ======
+        // Beginning of bridge 2 crafting function
+        // ======
+
+        //this one need 20 woods to craft it and the triggers coordinates are X:141 Y:107 to X: 145 to 110
+        // The bridge coordinates are X:140 Y:100 to X: 143 to 109
+
+        if(currentTileX >= 141 && currentTileX <= 145 && currentTileY >= 107 && currentTileY <= 110)
+        {
+            if(!bridge2Crafted)
+            {
+                displayCaptionText(window, font, "Press 'E' to craft the bridge to the third island", sf::Vector2f(475, 750));
+
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+                {
+                    bool hasWood = false;
+                    for(size_t i = 0; i < inventory.size(); ++i)
+                    {
+                        if(inventory[i].name == "Wood" && inventory[i].quantity >= 20)
+                        {
+                            hasWood = true;
+                            break;
+                        }
+                    }
+
+                    if(hasWood)
+                    {
+                        for(size_t i = 0; i < inventory.size(); ++i)
+                        {
+                            if(inventory[i].name == "Wood")
+                            {
+                                inventory[i].quantity -= 20;
+                                if(inventory[i].quantity == 0)
+                                {
+                                    inventory.erase(inventory.begin() + i);
+                                }
+                                break;
+                            }
+                        }
+
+                        for(int y = 102; y <= 110; ++y)
+                        {
+                            for(int x = 141; x <= 144; ++x)
+                            {
+                                tilemap[y][x] = Wood;
+                            }
+                        }
+
+                        displayCaptionText(window, font, "Bridge has been crafted", sf::Vector2f(475, 750));
+                        bridge2Crafted = true;
+                    }
+                    else
+                    {
+                        displayCaptionText(window, font, "You need 20 wood to craft a bridge", sf::Vector2f(515, 790));
+                    }
+                }
+            }
+            else
+            {
+                // std::cout << "Bridge 2 has already been crafted" << std::endl;
+            }
+        }
+
+        // ======
+        // End of bridge 2 crafting function
+        // ======
+
+        // ======
+        // Beginning of bridge 3 crafting function
+        // ======
+
+        //this one need 25 woods to craft it and the triggers coordinates are X: 159 Y: 61 to X: 150 to 65
+        // The bridge coordinates are X: 157 Y: 64 to X: 151 to 62
+
+        if(currentTileX >= 150 && currentTileX <= 159 && currentTileY >= 61 && currentTileY <= 65)
+        {
+            if(!bridge3Crafted)
+            {
+                displayCaptionText(window, font, "Press 'E' to craft the bridge to the third island", sf::Vector2f(475, 750));
+
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+                {
+                    bool hasWood = false;
+                    for(size_t i = 0; i < inventory.size(); ++i)
+                    {
+                        if(inventory[i].name == "Wood" && inventory[i].quantity >= 25)
+                        {
+                            hasWood = true;
+                            break;
+                        }
+                    }
+
+                    if(hasWood)
+                    {
+                        for(size_t i = 0; i < inventory.size(); ++i)
+                        {
+                            if(inventory[i].name == "Wood")
+                            {
+                                inventory[i].quantity -= 25;
+                                if(inventory[i].quantity == 0)
+                                {
+                                    inventory.erase(inventory.begin() + i);
+                                }
+                                break;
+                            }
+                        }
+
+                        for(int y = 62; y <= 64; ++y)
+                        {
+                            for(int x = 152; x <= 157; ++x)
+                            {
+                                tilemap[y][x] = Wood;
+                            }
+                        }
+
+                        displayCaptionText(window, font, "Bridge has been crafted", sf::Vector2f(475, 750));
+                        bridge3Crafted = true;
+                    }
+                    else
+                    {
+                        displayCaptionText(window, font, "You need 25 wood to craft a bridge", sf::Vector2f(515, 790));
+                    }
+                }
+            }
+            else
+            {
+                // std::cout << "Bridge 3 has already been crafted" << std::endl;
+            }
+        }
+
+        // ======
+        // End of bridge 3 crafting function
+        // ======
+
+        // ======
+        // Beginning of bridge 4 crafting function
+        // ======
+
+        //this one need 50 woods to craft it and the triggers coordinates are X: 87 Y: 110 to X: 91 to 112
+        // The bridge coordinates are X: 88 Y: 112 to X: 90 to 117
+
+        if(currentTileX >= 87 && currentTileX <= 91 && currentTileY >= 110 && currentTileY <= 112)
+        {
+            if(!bridge4Crafted)
+            {
+                displayCaptionText(window, font, "Press 'E' to craft the bridge to the fourth island", sf::Vector2f(475, 750));
+
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+                {
+                    bool hasWood = false;
+                    for(size_t i = 0; i < inventory.size(); ++i)
+                    {
+                        if(inventory[i].name == "Wood" && inventory[i].quantity >= 50)
+                        {
+                            hasWood = true;
+                            break;
+                        }
+                    }
+
+                    if(hasWood)
+                    {
+                        for(size_t i = 0; i < inventory.size(); ++i)
+                        {
+                            if(inventory[i].name == "Wood")
+                            {
+                                inventory[i].quantity -= 50;
+                                if(inventory[i].quantity == 0)
+                                {
+                                    inventory.erase(inventory.begin() + i);
+                                }
+                                break;
+                            }
+                        }
+
+                        for(int y = 112; y <= 117; ++y)
+                        {
+                            for(int x = 88; x <= 90; ++x)
+                            {
+                                tilemap[y][x] = Wood;
+                            }
+                        }
+
+                        displayCaptionText(window, font, "Bridge has been crafted", sf::Vector2f(475, 750));
+                        bridge4Crafted = true;
+                    }
+                    else
+                    {
+                        displayCaptionText(window, font, "You need 50 wood to craft a bridge", sf::Vector2f(515, 790));
+                    }
+                }
+            }
+            else
+            {
+                // std::cout << "Bridge 4 has already been crafted" << std::endl;
+            }
+        }
+
 
         // Display the contents of the window
         window.display();
