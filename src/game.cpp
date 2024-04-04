@@ -54,7 +54,10 @@ enum Terrain
     Water,
     Sand,
     Rock,
-    Tree,
+    Tree1,
+    Tree2,
+    Tree3,
+    Tree4,
     Firecamp,
     Workbench,
     House,
@@ -109,6 +112,7 @@ void drawInventory(sf::RenderWindow &window, float x, float y, float width, floa
     for (size_t i = 0; i < inventory.size(); ++i)
     {
         // add the item icon here
+        // add the item icon here
         text.setString(inventory[i].name + " : " + std::to_string(inventory[i].quantity));
         text.setPosition(std::round(x + 10), std::round(y + 10 + i * 30));
         window.draw(text);
@@ -132,20 +136,20 @@ void drawInventory(sf::RenderWindow &window, float x, float y, float width, floa
 // for test only /!\ to remove
 void fillInventory()
 {
-    Item item1;
-    item1.name = "apple";
-    item1.quantity = 5;
-    inventory.push_back(item1);
+    Item fruit;
+    fruit.name = "Fruit";
+    fruit.quantity = 0;
+    inventory.push_back(fruit);
 
-    Item item2;
-    item2.name = "wood";
-    item2.quantity = 9;
-    inventory.push_back(item2);
+    Item wood;
+    wood.name = "Wood";
+    wood.quantity = 0;
+    inventory.push_back(wood);
 
-    Item item3;
-    item3.name = "water bottle";
-    item3.quantity = 1;
-    inventory.push_back(item3);
+    Item water;
+    water.name = "Water bottle";
+    water.quantity = 0;
+    inventory.push_back(water);
 };
 
 void displayCaptionText(sf::RenderWindow &window, sf::Font &font, std::string captionText, sf::Vector2f position)
@@ -196,7 +200,10 @@ int main()
     textures[Water].loadFromFile("assets/water.png");
     textures[Sand].loadFromFile("assets/sand.png");
     textures[Rock].loadFromFile("assets/stone.png");
-    textures[Tree].loadFromFile("assets/tree_1.png");
+    textures[Tree1].loadFromFile("assets/tree_1.png");
+    textures[Tree2].loadFromFile("assets/tree_2.png");
+    textures[Tree3].loadFromFile("assets/tree_3.png");
+    textures[Tree4].loadFromFile("assets/tree_4.png");
     textures[Firecamp].loadFromFile("assets/fire_1.png");
     textures[Workbench].loadFromFile("assets/no_texture.png");
     textures[House].loadFromFile("assets/no_texture.png");
@@ -216,7 +223,6 @@ int main()
 
     float zoomLevel = 8.0f;
 
-    // sf::Vector2f playerPosition(158 * tileSize, 28 * tileSize);
     sf::Vector2f playerPosition(158 * tileSize, 28 * tileSize);
 
     sf::Texture playerTexture;
@@ -259,6 +265,66 @@ int main()
         int currentTileX = playerPosition.x / tileSize;
         int currentTileY = playerPosition.y / tileSize;
         int currentTileType = tilemap[currentTileY][currentTileX];
+
+        // If the player is on a tree, allow the player to chop the tree
+        if (currentTileType == Tree1 || currentTileType == Tree2 || currentTileType == Tree3 || currentTileType == Tree4)
+        {
+            static sf::Clock chopClock;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::E) && chopClock.getElapsedTime().asSeconds() >= 1.0f)
+            {
+                chopClock.restart();
+                // Add wood to the player's inventory
+                bool woodFound = false;
+                for (auto &item : inventory)
+                {
+                    if (item.name == "Wood")
+                    {
+                        item.quantity += 1;
+                        woodFound = true;
+                        break;
+                    }
+                }
+                if (!woodFound)
+                {
+                    Item wood;
+                    wood.name = "Wood";
+                    wood.quantity = 1;
+                    inventory.push_back(wood);
+                }
+
+                // Add fruit to the player's inventory
+                bool fruitFound = false;
+                for (auto &item : inventory)
+                {
+                    if (item.name == "Fruit")
+                    {
+                        item.quantity += 2;
+                        fruitFound = true;
+                        break;
+                    }
+                }
+                if (!fruitFound)
+                {
+                    Item fruit;
+                    fruit.name = "Fruit";
+                    fruit.quantity = 2;
+                    inventory.push_back(fruit);
+                }
+
+                playerFood -= 0.005f;    // Decrease hunger when player chops a tree
+                playerThirst -= 0.0005f; // Decrease thirst when player chops a tree
+
+                // Pass the tree tile to the following stage
+                // Increment the current tile's value, and handle wrapping around if necessary
+                tilemap[currentTileY][currentTileX]++; // Increment current tile
+
+                if (tilemap[currentTileY][currentTileX] > Tree4) // If it's greater than the highest tree stage
+                {
+                    // Wrap around to the initial tree stage
+                    tilemap[currentTileY][currentTileX] = Grass;
+                }
+            }
+        }
 
         // Check if the key pressed is 'Z', 'W', or 'Up'
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) // Move up
@@ -380,12 +446,12 @@ int main()
             // Check if the new position is on a water tile (assuming water tiles are represented by value 1)
             int tileX = newPosition.x / tileSize;
             int tileY = newPosition.y / tileSize;
-            // if (tilemap[tileY][tileX] != Water)
-            // {
+            if (tilemap[tileY][tileX] != Water)
+            {
             // Move the player to the new position
             playerPosition = newPosition;
             playerSprite.setPosition(playerPosition);
-            // };
+            };
         };
 
         sf::Vector2f viewSize(windowWidth / zoomLevel, windowHeight / zoomLevel);
@@ -405,7 +471,7 @@ int main()
                 if (terrainType >= 0 && terrainType < Terrain::NumTerrains)
                 {
                     // If the terrain is a tree or a firecamp, draw the grass first
-                    if (terrainType == Tree || terrainType == Firecamp)
+                    if (terrainType == Firecamp || terrainType == Tree1 || terrainType == Tree2 || terrainType == Tree3 || terrainType == Tree4)
                     {
                         int grassType = Grass; // Assuming grass is represented by 0
                         terrainSprites[grassType].setPosition(x * tileSize, y * tileSize);
@@ -470,14 +536,14 @@ int main()
             // std::cout << "Inventory is closed" << std::endl;
         };
 
-        // function to display the tiles coordinates
-        sf::Text text;
-        text.setFont(font);
-        text.setCharacterSize(24);
-        text.setFillColor(sf::Color::White);
-        text.setString("X: " + std::to_string(currentTileX) + " Y: " + std::to_string(currentTileY));
-        text.setPosition(playerPosition.x - 50, playerPosition.y - 50);
-        window.draw(text);
+        // // function to display the tiles coordinates
+        // sf::Text text;
+        // text.setFont(font);
+        // text.setCharacterSize(24);
+        // text.setFillColor(sf::Color::White);
+        // text.setString("X: " + std::to_string(currentTileX) + " Y: " + std::to_string(currentTileY));
+        // text.setPosition(playerPosition.x - 50, playerPosition.y - 50);
+        // window.draw(text);
 
         // ======
         // Beginning of bridge 1 crafting function
@@ -496,7 +562,7 @@ int main()
                     bool hasWood = false;
                     for (size_t i = 0; i < inventory.size(); ++i)
                     {
-                        if (inventory[i].name == "wood" && inventory[i].quantity >= 10)
+                        if (inventory[i].name == "Wood" && inventory[i].quantity >= 10)
                         {
                             hasWood = true;
                             break;
@@ -509,7 +575,7 @@ int main()
                         // remove 10 wood from the inventory
                         for (size_t i = 0; i < inventory.size(); ++i)
                         {
-                            if (inventory[i].name == "wood")
+                            if (inventory[i].name == "Wood")
                             {
                                 inventory[i].quantity -= 10;
                                 if (inventory[i].quantity == 0)

@@ -11,14 +11,14 @@ terrain_colors = {
     hex_to_rgb("#fff200"): 2,  # Sand
     hex_to_rgb("#828282"): 3,  # Rock
     hex_to_rgb("#80430d"): 4,  # Tree
-    hex_to_rgb("#1500ff"): 5,  # Firecamp
-    hex_to_rgb("#118056"): 6,  # Workbench
-    hex_to_rgb("#00ff9f"): 7,  # House
-    hex_to_rgb("#f87e00"): 8,  # Plantation
-    hex_to_rgb("#7a00ff"): 9,  # Animal Enclosures
-    hex_to_rgb("#000000"): 10, # Blackbox
-    hex_to_rgb("#ff6b6b"): 11, # Shelter Walls
-    hex_to_rgb("#ffffff"): 12, # Animal Spawner
+    hex_to_rgb("#1500ff"): 8,  # Firecamp
+    hex_to_rgb("#118056"): 9,  # Workbench
+    hex_to_rgb("#00ff9f"): 10,  # House
+    hex_to_rgb("#f87e00"): 11,  # Plantation
+    hex_to_rgb("#7a00ff"): 12,  # Animal Enclosures
+    hex_to_rgb("#000000"): 13, # Blackbox
+    hex_to_rgb("#ff6b6b"): 14, # Shelter Walls
+    hex_to_rgb("#ffffff"): 15, # Animal Spawner
 }
 
 # Load the image
