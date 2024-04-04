@@ -247,21 +247,25 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Night 4 Life");
 
+        // Assuming you have already created a sf::RenderWindow named window
+    sf::View uiBarsView(sf::FloatRect(0.f, 0.f, window.getSize().x, window.getSize().y));
+
+
     // Load icons
     sf::Texture hungerIconTexture;
     hungerIconTexture.loadFromFile("assets/hunger.png");
     sf::Sprite hungerIcon(hungerIconTexture);
-    hungerIcon.setScale(0.5f, 0.5f); // Reduce icon size
+    hungerIcon.setScale(2.5f, 2.5f); // Reduce icon size
 
     sf::Texture lifeIconTexture;
     lifeIconTexture.loadFromFile("assets/life.png");
     sf::Sprite lifeIcon(lifeIconTexture);
-    lifeIcon.setScale(0.5f, 0.5f); // Reduce icon size
+    lifeIcon.setScale(2.5f, 2.5f); // Reduce icon size
 
     sf::Texture thirstIconTexture;
     thirstIconTexture.loadFromFile("assets/thirst.png");
     sf::Sprite thirstIcon(thirstIconTexture);
-    thirstIcon.setScale(0.5f, 0.5f); // Reduce icon size
+    thirstIcon.setScale(2.5f, 2.5f); // Reduce icon size
 
     std::vector<sf::Texture> textures(Terrain::NumTerrains);
     textures[Grass].loadFromFile("assets/grass.png");
@@ -432,6 +436,26 @@ int main()
                     // Wrap around to the initial tree stage
                     tilemap[currentTileY][currentTileX] = Grass;
                 }
+            }
+        }
+
+        // If P is pressed; zoom in the view
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+        {
+            zoomLevel -= 0.5f;
+            if (zoomLevel < 3.5f)
+            {
+                zoomLevel = 3.5f;
+            }
+        }
+
+        // If M is pressed; zoom out the view
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
+        {
+            zoomLevel += 0.5f;
+            if (zoomLevel > 10.0f)
+            {
+                zoomLevel = 10.0f;
             }
         }
 
@@ -608,7 +632,7 @@ int main()
 
         sf::View view(playerPosition, viewSize);
 
-        window.setView(view);
+
 
         updateAnimals();
 
@@ -697,9 +721,9 @@ int main()
         };
 
         // Update the positions of the bars and icons to follow the player
-        float barX = playerPosition.x - windowWidth / (6 * zoomLevel) - 65;
-        float barY = playerPosition.y - windowHeight / (6 * zoomLevel) - 40;
-        float iconX = barX - 10; // Adjust the distance between the icon and the bar as needed
+        // float barX = playerPosition.x - windowWidth / (6 * zoomLevel) - 65;
+        // float barY = playerPosition.y - windowHeight / (6 * zoomLevel) - 40;
+        // float iconX = barX - 10; // Adjust the distance between the icon and the bar as needed
 
         // draw keys
         if (hasKey1 == false)
@@ -717,26 +741,34 @@ int main()
 
         drawAnimals(window);
 
-        // Draw player sprite, icons, and bars
-        window.draw(playerSprite);
+window.setView(uiBarsView);
 
-        // Draw icons
-        lifeIcon.setPosition(iconX, barY - 2);
-        window.draw(lifeIcon);
+// Position and scale of icons should be adapted based on the size of the view or window
+float iconX = 50; // Adjust based on your UI layout
+float barY = 20; // Starting Y position for the bars
+float barHeight = 35; // Example bar height
+float barWidth = window.getSize().x / 5; // Example bar width, adjust as needed
+float barX = iconX + hungerIcon.getGlobalBounds().width + 20; // Position bar next to the icon
 
-        thirstIcon.setPosition(iconX, barY - 2 + barHeight + 5);
-        window.draw(thirstIcon);
+// Now draw your UI elements as before, they will be positioned relative to the UI view
+// Icons
+lifeIcon.setPosition(iconX, barY - 2);
+window.draw(lifeIcon);
 
-        hungerIcon.setPosition(iconX, barY - 2 + 2 * (barHeight + 5));
-        window.draw(hungerIcon);
+thirstIcon.setPosition(iconX, barY - 2 + barHeight + 20);
+window.draw(thirstIcon);
 
-        // Draw bars
-        drawBar(window, barX, barY, barWidth, barHeight, static_cast<float>(playerHealth) / maxHealth, healthColor);
-        drawBar(window, barX, barY + barHeight + 5, barWidth, barHeight, static_cast<float>(playerThirst) / maxThirst, thirstColor);
-        drawBar(window, barX, barY + 2 * (barHeight + 5), barWidth, barHeight, static_cast<float>(playerFood) / maxFood, foodColor);
+hungerIcon.setPosition(iconX, barY - 2 + 2 * (barHeight + 20));
+window.draw(hungerIcon);
 
-        // float inventoryX_ = playerPosition.x - windowWidth / (6 * zoomLevel) - 66;
-        // float inventoryY_ = playerPosition.y - windowHeight / (6 * zoomLevel) - 10;
+// Bars
+drawBar(window, barX, barY, barWidth, barHeight, static_cast<float>(playerHealth) / maxHealth, healthColor);
+drawBar(window, barX, barY + barHeight + 20, barWidth, barHeight, static_cast<float>(playerThirst) / maxThirst, thirstColor);
+drawBar(window, barX, barY + 2 * (barHeight + 20), barWidth, barHeight, static_cast<float>(playerFood) / maxFood, foodColor);
+
+// If you have a game view for rendering the world or characters, set it back here
+// window.setView(gameView);
+
 
         float inventoryX_ = 37;
         float inventoryY_ = 206;
@@ -1062,6 +1094,8 @@ int main()
                 displayCaptionText(window, font, "You need all the keys to open the blackbox", sf::Vector2f(500, 750));
             }
         }
+
+        window.setView(view);
 
         // Display the contents of the window
         window.display();
