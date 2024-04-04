@@ -14,11 +14,13 @@ terrain_colors = {
     hex_to_rgb("#1500ff"): 8,  # Firecamp
     hex_to_rgb("#118056"): 9,  # Workbench
     hex_to_rgb("#00ff9f"): 10,  # House
-    hex_to_rgb("#f87e00"): 11,  # Plantation
-    hex_to_rgb("#7a00ff"): 12,  # Animal Enclosures
-    hex_to_rgb("#000000"): 13, # Blackbox
-    hex_to_rgb("#ff6b6b"): 14, # Shelter Walls
-    hex_to_rgb("#ffffff"): 15, # Animal Spawner
+    hex_to_rgb("#ff7e00"): 11, # Lava
+    hex_to_rgb("#000000"): 12, # Blackbox
+    hex_to_rgb("#ff6b6b"): 13, # Shelter Walls
+    hex_to_rgb("#ffffff"): 14, # Animal Spawner
+    hex_to_rgb("#ff00ff"): 15, # Player Spawner
+    hex_to_rgb("#ff000d"): 16, # Chest
+    hex_to_rgb("#fc6500"): 17, # Magma
 }
 
 # Load the image

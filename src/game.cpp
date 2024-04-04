@@ -7,7 +7,7 @@
 
 const int windowWidth = 1920;
 const int windowHeight = 1080;
-const int speed = 3;     // standard is 3, debug is 7
+const int speed = 20;     // standard is 3, debug is 7
 const int barWidth = 50; // Width of each bar
 const int barHeight = 5; // Height of each bar
 
@@ -58,13 +58,14 @@ enum Terrain
     Firecamp,
     Workbench,
     House,
-    Plantation,
-    AnimalEnclosures,
+    Lava,
     Blackbox,
     ShelterWalls,
     AnimalSpawner,
-    PlayerSpawn,
     Wood,
+    PlayerSpawn,
+    Magma,
+    Chest,
     NumTerrains
 };
 
@@ -191,13 +192,14 @@ int main()
     textures[Firecamp].loadFromFile("assets/fire_1.png");
     textures[Workbench].loadFromFile("assets/no_texture.png");
     textures[House].loadFromFile("assets/no_texture.png");
-    textures[Plantation].loadFromFile("assets/no_texture.png");
-    textures[AnimalEnclosures].loadFromFile("assets/no_texture.png");
+    textures[Lava].loadFromFile("assets/lava.png");
     textures[Blackbox].loadFromFile("assets/no_texture.png");
     textures[ShelterWalls].loadFromFile("assets/no_texture.png");
     textures[AnimalSpawner].loadFromFile("assets/no_texture.png");
     textures[PlayerSpawn].loadFromFile("assets/PlayerSpawn.png");
     textures[Wood].loadFromFile("assets/wood.png");
+    textures[Magma].loadFromFile("assets/lava.png");
+    textures[Chest].loadFromFile("assets/chest.png");
 
     std::vector<sf::Sprite> terrainSprites(Terrain::NumTerrains);
     for (int i = 0; i < Terrain::NumTerrains; ++i)
@@ -470,15 +472,12 @@ int main()
             // Check if the new position is on a water tile (assuming water tiles are represented by value 1)
             int tileX = newPosition.x / tileSize;
             int tileY = newPosition.y / tileSize;
-            if (tilemap[tileY][tileX] != Water)
-            {
+            // if (tilemap[tileY][tileX] != Water)
+            // {
                 // Move the player to the new position
                 playerPosition = newPosition;
                 playerSprite.setPosition(playerPosition);
-                // Move the player to the new position
-                playerPosition = newPosition;
-                playerSprite.setPosition(playerPosition);
-            };
+            // };
         };
 
         sf::Vector2f viewSize(windowWidth / zoomLevel, windowHeight / zoomLevel);
