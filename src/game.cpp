@@ -7,7 +7,7 @@
 
 const int windowWidth = 1920;
 const int windowHeight = 1080;
-const int speed = 20;     // standard is 3, debug is 7
+const int speed = 25;    // standard is 3
 const int barWidth = 50; // Width of each bar
 const int barHeight = 5; // Height of each bar
 
@@ -29,6 +29,18 @@ bool bridge1Crafted = false;
 bool bridge2Crafted = false;
 bool bridge3Crafted = false;
 bool bridge4Crafted = false;
+
+struct Animal {
+    sf::Sprite sprite;
+    int frame = 0;
+    int direction = -1; // Initialize to an invalid value to indicate no direction is currently chosen
+    int iteration = 0;
+    static const int animalSpeed = 2; // Consider using a float for smoother movement
+    static const int moveDistance = 10; // Distance to move in one direction
+};
+
+std::vector<Animal> animals;
+std::vector<sf::Texture> textures(6); // For 6 types of animals
 
 // Inventory logic
 struct Item
@@ -131,7 +143,7 @@ void fillInventory()
 
     Item wood;
     wood.name = "Wood";
-    wood.quantity = 0;
+    wood.quantity = 150;
     inventory.push_back(wood);
 
     Item water;
@@ -142,6 +154,7 @@ void fillInventory()
 
 void displayCaptionText(sf::RenderWindow &window, sf::Font &font, std::string captionText, sf::Vector2f position)
 {
+    // put the text in a view
     sf::View originalView = window.getView();
 
     sf::View uiView(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
@@ -158,8 +171,78 @@ void displayCaptionText(sf::RenderWindow &window, sf::Font &font, std::string ca
     window.setView(originalView);
 };
 
+void loadAnimalsTextures() {
+    textures[0].loadFromFile("assets/animal_chicken.png");
+    textures[1].loadFromFile("assets/animal_pig.png");
+    textures[2].loadFromFile("assets/animal_cow.png");
+    textures[3].loadFromFile("assets/animal_sheep.png");
+    textures[4].loadFromFile("assets/animal_goose.png");
+    textures[5].loadFromFile("assets/animal_goat.png");
+}
+
+void initializeAnimals() {
+    std::array<std::pair<int, int>, 60> spawnPoints = {
+        std::make_pair(160, 30), std::make_pair(175, 35), std::make_pair(185, 40), std::make_pair(205, 35), std::make_pair(220, 20), std::make_pair(215, 70), std::make_pair(205, 75), std::make_pair(210, 95), std::make_pair(195, 95), std::make_pair(190, 85), std::make_pair(180, 80), std::make_pair(190, 75), std::make_pair(190, 65), std::make_pair(160, 60), std::make_pair(175, 80), std::make_pair(185, 95), std::make_pair(200, 80), std::make_pair(210, 70), std::make_pair(210, 90), std::make_pair(200, 105), std::make_pair(210, 140), std::make_pair(200, 150), std::make_pair(185, 135), std::make_pair(175, 140), std::make_pair(160, 120), std::make_pair(175, 115), std::make_pair(185, 125), std::make_pair(200, 120), std::make_pair(200, 200), std::make_pair(190, 215), std::make_pair(175, 200), std::make_pair(165, 200), std::make_pair(165, 190), std::make_pair(165, 175), std::make_pair(150, 165), std::make_pair(140, 160), std::make_pair(140, 145), std::make_pair(150, 130), std::make_pair(160, 120), std::make_pair(160, 140), std::make_pair(40, 30), std::make_pair(50, 35), std::make_pair(60, 40), std::make_pair(70, 45), std::make_pair(85, 40), std::make_pair(100, 40), std::make_pair(110, 30), std::make_pair(120, 40), std::make_pair(140, 50), std::make_pair(130, 80), std::make_pair(120, 100), std::make_pair(130, 100),
+    };
+    
+    // Example loop to initialize animals
+    for (int i = 0; i < spawnPoints.size(); ++i) {
+        Animal animal;
+        animal.sprite.setTexture(textures[i % 6]); // Cycle through 6 animal types
+        animal.sprite.setTextureRect(sf::IntRect(0, 0, 16, 16));
+        animal.sprite.setScale(0.7f, 0.7f);
+        animal.sprite.setPosition(spawnPoints[i].first * tileSize, spawnPoints[i].second * tileSize);
+        animals.push_back(animal);
+    }
+}
+
+void updateAnimals() {
+    static sf::Clock animalClock;
+    if (animalClock.getElapsedTime().asSeconds() >= 0.25f) {
+        for (auto& animal : animals) {
+            // Update the animation frame
+            animal.frame = (animal.frame + 1) % 4;
+            animal.sprite.setTextureRect(sf::IntRect(animal.frame * 16, 0, 16, 16));
+
+            // Assuming tileSize and tilemap are accessible here
+            int x = static_cast<int>(animal.sprite.getPosition().x) / tileSize;
+            int y = static_cast<int>(animal.sprite.getPosition().y) / tileSize;
+
+            // Update direction and movement
+            if (animal.iteration >= animal.moveDistance) {
+                animal.direction = rand() % 4;
+                animal.iteration = 0; // Reset for the next movement
+            }
+
+            if (animal.iteration < animal.moveDistance) {
+                if (animal.direction == 0 && y > 0 && tilemap[y - 1][x] != Water) {
+                    animal.sprite.move(0, -animal.animalSpeed);
+                } else if (animal.direction == 1 && y < (mapHeight - 1) && tilemap[y + 1][x] != Water) {
+                    animal.sprite.move(0, animal.animalSpeed);
+                } else if (animal.direction == 2 && x > 0 && tilemap[y][x - 1] != Water) {
+                    animal.sprite.move(-animal.animalSpeed, 0);
+                } else if (animal.direction == 3 && x < (mapWidth - 1) && tilemap[y][x + 1] != Water) {
+                    animal.sprite.move(animal.animalSpeed, 0);
+                }
+                animal.iteration++; // Increment the iteration each frame the animal moves
+            }
+        }
+        animalClock.restart();
+    }
+}
+
+void drawAnimals(sf::RenderWindow &window) {
+    for (const auto& animal : animals) {
+        window.draw(animal.sprite);
+    }
+}
+
+// to call it:
+
 int main()
 {
+    loadAnimalsTextures();
+    initializeAnimals();
     fillInventory();
 
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Night 4 Life");
@@ -194,7 +277,7 @@ int main()
     textures[House].loadFromFile("assets/no_texture.png");
     textures[Lava].loadFromFile("assets/lava.png");
     textures[Blackbox].loadFromFile("assets/no_texture.png");
-    textures[ShelterWalls].loadFromFile("assets/no_texture.png");
+    textures[ShelterWalls].loadFromFile("assets/fence.png");
     textures[AnimalSpawner].loadFromFile("assets/no_texture.png");
     textures[PlayerSpawn].loadFromFile("assets/PlayerSpawn.png");
     textures[Wood].loadFromFile("assets/wood.png");
@@ -223,6 +306,48 @@ int main()
     int maxThirst = 2000;
     int maxFood = 4000;
 
+    sf::Texture animalTexture;
+    animalTexture.loadFromFile("assets/animal_chicken.png");
+    sf::Sprite animalSprite(animalTexture);
+    animalSprite.setTextureRect(sf::IntRect(0, 0, 16, 16)); // Set initial frame
+    animalSprite.setScale(0.7f, 0.7f);
+    animalSprite.setPosition(191 * tileSize, 86 * tileSize);
+
+    // animate the lava tiles by changing the texture rect the texture dimensions are 16x320
+    sf::Texture lavaTexture;
+    lavaTexture.loadFromFile("assets/lava.png");
+    sf::Sprite lavaSprite(lavaTexture);
+    lavaSprite.setTextureRect(sf::IntRect(0, 0, 16, 320)); // Set initial frame
+
+    bool hasKey1 = false;
+    bool hasKey2 = false;
+    bool hasKey3 = false;
+
+    sf::Texture key1Texture;
+    key1Texture.loadFromFile("assets/key1.png");
+    sf::Sprite key1Sprite(key1Texture);
+    key1Sprite.setScale(0.5f, 0.5f);
+    key1Sprite.setPosition(200 * tileSize, 109 * tileSize);
+
+    sf::Texture key2Texture;
+    key2Texture.loadFromFile("assets/key2.png");
+    sf::Sprite key2Sprite(key2Texture);
+    key2Sprite.setScale(0.5f, 0.5f);
+    key2Sprite.setPosition(231 * tileSize, 198 * tileSize);
+
+    sf::Texture key3Texture;
+    key3Texture.loadFromFile("assets/key3.png");
+    sf::Sprite key3Sprite(key3Texture);
+    key3Sprite.setScale(0.5f, 0.5f);
+    key3Sprite.setPosition(30 * tileSize, 28 * tileSize);
+
+    static sf::Clock animalClock;
+    static int frame = 0;
+
+    static sf::Clock lavaAnimationClock;
+    static int tileFrame = 0;
+    static bool direction = true; // Initially moving "forward" through frames
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -243,6 +368,8 @@ int main()
                 };
             };
         };
+
+        // animate the lava tiles by changing the texture rect the texture dimensions are 16x320 and the frame is 16x16 don't forget to redraw the lava tiles everywhere in the map
 
         // Movement vector.
         sf::Vector2f movement(0, 0);
@@ -469,14 +596,14 @@ int main()
         if (newPosition.x >= 0 && newPosition.x < mapWidth * tileSize &&
             newPosition.y >= 0 && newPosition.y < mapHeight * tileSize)
         {
-            // Check if the new position is on a water tile (assuming water tiles are represented by value 1)
+            // Check if the new position is on a water tile (assuming water tiles are represented by value 1) or a fence
             int tileX = newPosition.x / tileSize;
             int tileY = newPosition.y / tileSize;
-            // if (tilemap[tileY][tileX] != Water)
+            // if (tilemap[tileY][tileX] != Water && tilemap[tileY][tileX] != ShelterWalls)
             // {
-                // Move the player to the new position
-                playerPosition = newPosition;
-                playerSprite.setPosition(playerPosition);
+            // Move the player to the new position
+            playerPosition = newPosition;
+            playerSprite.setPosition(playerPosition);
             // };
         };
 
@@ -486,9 +613,11 @@ int main()
 
         window.setView(view);
 
+        updateAnimals();
+
         window.clear();
 
-        // Draw the terrain sprites with trees layered over grass
+        // Draw the terrain sprites with trees and fences layered over grass
         for (int y = 0; y < mapHeight; ++y)
         {
             for (int x = 0; x < mapWidth; ++x)
@@ -496,15 +625,76 @@ int main()
                 int terrainType = tilemap[y][x];
                 if (terrainType >= 0 && terrainType < Terrain::NumTerrains)
                 {
-                    // If the terrain is a tree or a firecamp, draw the grass first
-                    if (terrainType == Firecamp || terrainType == Tree1 || terrainType == Tree2 || terrainType == Tree3 || terrainType == Tree4)
+                    // If the terrain is a tree, a firecamp or a fence draw the grass first
+                    if (terrainType == Firecamp || terrainType == Tree1 || terrainType == Tree2 || terrainType == Tree3 || terrainType == Tree4 || terrainType == ShelterWalls)
+                    // if (terrainType == ShelterWalls)
                     {
                         int grassType = Grass; // Assuming grass is represented by 0
                         terrainSprites[grassType].setPosition(x * tileSize, y * tileSize);
                         window.draw(terrainSprites[grassType]);
                     };
-                    terrainSprites[terrainType].setPosition(x * tileSize, y * tileSize);
-                    window.draw(terrainSprites[terrainType]);
+                    // if it's lava, animate it by changing the texture rect
+                    if (terrainType == Lava || terrainType == Magma)
+                    {
+                        if (lavaAnimationClock.getElapsedTime().asSeconds() >= 0.3f)
+                        {
+                            if (tileFrame == 19)
+                            {
+                                direction = false; // Change direction when reaching the last frame
+                            }
+                            else if (tileFrame == 0)
+                            {
+                                direction = true; // Change direction when reaching the first frame
+                            }
+
+                            tileFrame += direction ? 1 : -1; // Increment or decrement frame based on direction
+
+                            lavaSprite.setTextureRect(sf::IntRect(0, tileFrame * 16, 16, 16));
+                            lavaAnimationClock.restart();
+                        }
+                        lavaSprite.setPosition(x * tileSize, y * tileSize);
+                        window.draw(lavaSprite);
+
+                        // Draw the lava tiles in the surrounding area
+                        if (y > 0)
+                        {
+                            lavaSprite.setPosition(x * tileSize, (y - 1) * tileSize);
+                            window.draw(lavaSprite);
+                        }
+                        if (y < mapHeight - 1)
+                        {
+                            lavaSprite.setPosition(x * tileSize, (y + 1) * tileSize);
+                            window.draw(lavaSprite);
+                        }
+                        if (x > 0)
+                        {
+                            lavaSprite.setPosition((x - 1) * tileSize, y * tileSize);
+                            window.draw(lavaSprite);
+                        }
+                        if (x < mapWidth - 1)
+                        {
+                            lavaSprite.setPosition((x + 1) * tileSize, y * tileSize);
+                            window.draw(lavaSprite);
+                        }
+                    }
+                    if (terrainType == Water)
+                    {
+                    }
+
+                    if (terrainType != Tree1 && terrainType != Tree2 && terrainType != Tree3 && terrainType != Tree4)
+                    {
+                        terrainSprites[terrainType].setPosition(x * tileSize, y * tileSize);
+                        window.draw(terrainSprites[terrainType]);
+                    }
+
+                    // then draw trees and scale them up by 2
+                    if (terrainType == Tree1 || terrainType == Tree2 || terrainType == Tree3 || terrainType == Tree4)
+                    {
+
+                        terrainSprites[terrainType].setScale(2.f, 2.f);
+                        terrainSprites[terrainType].setPosition(x * tileSize - 16, y * tileSize - 16);
+                        window.draw(terrainSprites[terrainType]);
+                    }
                 };
             };
         };
@@ -513,6 +703,20 @@ int main()
         float barX = playerPosition.x - windowWidth / (6 * zoomLevel) - 65;
         float barY = playerPosition.y - windowHeight / (6 * zoomLevel) - 40;
         float iconX = barX - 10; // Adjust the distance between the icon and the bar as needed
+
+        // draw keys
+        if (hasKey1 == false)
+        {
+            window.draw(key1Sprite);
+        }
+        else if (hasKey2 == false)
+        {
+            window.draw(key2Sprite);
+        }
+        else if (hasKey3 == false)
+        {
+            window.draw(key3Sprite);
+        }
 
         // Draw player sprite, icons, and bars
         window.draw(playerSprite);
@@ -562,18 +766,9 @@ int main()
             // std::cout << "Inventory is closed" << std::endl;
         };
 
-        // function to display the tiles coordinates
-        // sf::Text text;
-        // text.setFont(font);
-        // text.setCharacterSize(24);
-        // text.setFillColor(sf::Color::White);
-        // text.setString("X: " + std::to_string(currentTileX) + " Y: " + std::to_string(currentTileY));
-        // text.setPosition(playerPosition.x - 50, playerPosition.y - 50);
-        // window.draw(text);
+        // display coordinates of the player
+        displayCaptionText(window, font, "X: " + std::to_string(currentTileX) + " Y: " + std::to_string(currentTileY), sf::Vector2f(1275, 10));
 
-        // ======
-        // Beginning of bridge 1 crafting function
-        // ======
         if (currentTileX >= 182 && currentTileX <= 187 && currentTileY >= 95 && currentTileY <= 99) // trigger zone
         {
             if (!bridge1Crafted)
@@ -636,16 +831,6 @@ int main()
                 // std::cout << "Bridge 1 has already been crafted" << std::endl;
             }
         };
-        // ======
-        // End of bridge 1 crafting function
-        // ======
-
-        // ======
-        // Beginning of bridge 2 crafting function
-        // ======
-
-        // this one need 20 woods to craft it and the triggers coordinates are X:141 Y:107 to X: 145 to 110
-        //  The bridge coordinates are X:140 Y:100 to X: 143 to 109
 
         if (currentTileX >= 141 && currentTileX <= 145 && currentTileY >= 107 && currentTileY <= 110)
         {
@@ -703,17 +888,6 @@ int main()
             }
         }
 
-        // ======
-        // End of bridge 2 crafting function
-        // ======
-
-        // ======
-        // Beginning of bridge 3 crafting function
-        // ======
-
-        // this one need 25 woods to craft it and the triggers coordinates are X: 159 Y: 61 to X: 150 to 65
-        //  The bridge coordinates are X: 157 Y: 64 to X: 151 to 62
-
         if (currentTileX >= 150 && currentTileX <= 159 && currentTileY >= 61 && currentTileY <= 65)
         {
             if (!bridge3Crafted)
@@ -770,17 +944,6 @@ int main()
             }
         }
 
-        // ======
-        // End of bridge 3 crafting function
-        // ======
-
-        // ======
-        // Beginning of bridge 4 crafting function
-        // ======
-
-        // this one need 50 woods to craft it and the triggers coordinates are X: 87 Y: 110 to X: 91 to 112
-        //  The bridge coordinates are X: 88 Y: 112 to X: 90 to 117
-
         if (currentTileX >= 87 && currentTileX <= 91 && currentTileY >= 110 && currentTileY <= 112)
         {
             if (!bridge4Crafted)
@@ -834,6 +997,118 @@ int main()
             else
             {
                 // std::cout << "Bridge 4 has already been crafted" << std::endl;
+            }
+        }
+
+        // if (animalClock.getElapsedTime().asSeconds() >= 0.25f)
+        // {
+        //     animalClock.restart();
+        //     frame = (frame + 1) % 4; // Assuming you have 4 frames to cycle through
+        //     animalSprite.setTextureRect(sf::IntRect(frame * 16, 0, 16, 16));
+
+        //     static int direction = -1; // Initialize to an invalid value to indicate no direction is currently chosen
+        //     static int iteration = 0;
+        //     static int animalSpeed = 2;         // Consider using a float for smoother movement
+        //     static const int moveDistance = 10; // Distance to move in one direction
+
+        //     // Assuming these are set correctly each frame
+        //     int x = animalSprite.getPosition().x / tileSize;
+        //     int y = animalSprite.getPosition().y / tileSize;
+
+        //     // Only choose a new direction and reset the movement if the previous movement is complete
+        //     if (iteration >= moveDistance)
+        //     {
+        //         direction = rand() % 4;
+        //         iteration = 0; // Reset for the next movement
+        //     }
+
+        //     // Movement logic adjusted for smooth transition
+        //     if (iteration < moveDistance)
+        //     {
+        //         if (direction == 0 && y > 0 && tilemap[y - 1][x] != Water)
+        //         {
+        //             animalSprite.move(0, -animalSpeed);
+        //         }
+        //         else if (direction == 1 && y < (mapHeight - 1) && tilemap[y + 1][x] != Water)
+        //         {
+        //             animalSprite.move(0, animalSpeed);
+        //         }
+        //         else if (direction == 2 && x > 0 && tilemap[y][x - 1] != Water)
+        //         {
+        //             animalSprite.move(-animalSpeed, 0);
+        //         }
+        //         else if (direction == 3 && x < (mapWidth - 1) && tilemap[y][x + 1] != Water)
+        //         {
+        //             animalSprite.move(animalSpeed, 0);
+        //         }
+        //         iteration++; // Increment the iteration each frame the animal moves
+        //     }
+        // }
+        // window.draw(animalSprite);
+
+
+        drawAnimals(window);
+
+        // detect if the player is near the key1 (between 190, 85 and 192, 87) then display a message to press 'E' to pick up the key and pass the hasKey1 to true
+        if (currentTileX >= 199 && currentTileX <= 201 && currentTileY >= 108 && currentTileY <= 110)
+        {
+            if (hasKey1 == false)
+            {
+                displayCaptionText(window, font, "Press 'E' to pick up the key", sf::Vector2f(475, 750));
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+                {
+                    hasKey1 = true;
+                    displayCaptionText(window, font, "Key 1 has been picked up", sf::Vector2f(475, 750));
+                }
+            }
+        }
+
+        // detect if the player is near the key2 (between 231, 198 and 233, 200) then display a message to press 'E' to pick up the key and pass the hasKey2 to true
+        if (currentTileX >= 230 && currentTileX <= 232 && currentTileY >= 197 && currentTileY <= 199)
+        {
+            if (hasKey2 == false)
+            {
+                displayCaptionText(window, font, "Press 'E' to pick up the key", sf::Vector2f(475, 750));
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+                {
+                    hasKey2 = true;
+                    displayCaptionText(window, font, "Key 2 has been picked up", sf::Vector2f(475, 750));
+                }
+            }
+        }
+
+        // detect if the player is near the key3 (between 30, 28 and 32, 30) then display a message to press 'E' to pick up the key and pass the hasKey3 to true
+        if (currentTileX >= 29 && currentTileX <= 31 && currentTileY >= 27 && currentTileY <= 29)
+        {
+            if (hasKey3 == false)
+            {
+                displayCaptionText(window, font, "Press 'E' to pick up the key", sf::Vector2f(475, 750));
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+                {
+                    hasKey3 = true;
+                    displayCaptionText(window, font, "Key 3 has been picked up", sf::Vector2f(475, 750));
+                }
+            }
+        }
+
+        // now if the player is on the area of the blackbox (between 25,222 and 30,227) and has all the keys, display a message to press 'E' to open the blackbox
+        if (currentTileX >= 24 && currentTileX <= 31 && currentTileY >= 221 && currentTileY <= 228)
+        {
+            if (hasKey1 == true && hasKey2 == true && hasKey3 == true)
+            {
+                displayCaptionText(window, font, "Press 'E' to open the blackbox", sf::Vector2f(475, 750));
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+                {
+                    displayCaptionText(window, font, "The blackbox has been opened", sf::Vector2f(500, 750));
+                }
+            }
+            else
+            {
+                displayCaptionText(window, font, "You need all the keys to open the blackbox", sf::Vector2f(500, 750));
             }
         }
 
