@@ -190,7 +190,7 @@ int main()
     float zoomLevel = 8.0f;
 
     // sf::Vector2f playerPosition(158 * tileSize, 28 * tileSize);
-    sf::Vector2f playerPosition(3*tileSize, 3*tileSize);
+    sf::Vector2f playerPosition(158 * tileSize, 28 * tileSize);
 
     sf::Texture playerTexture;
     playerTexture.loadFromFile("assets/player_down_0.png");
