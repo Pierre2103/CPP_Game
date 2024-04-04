@@ -11,10 +11,7 @@ const int speed = 3; // standard is 3, debug is 7
 const int barWidth = 50; // Width of each bar
 const int barHeight = 5; // Height of each bar
 
-// Colors for the bars:
-// Mix between pink and red for the health bar
-// Light blue for thirst
-// Orange for food
+// Colors for the bars
 const sf::Color healthColor(136, 8, 8, 220);
 const sf::Color thirstColor(36, 157, 159, 220);
 const sf::Color foodColor(255, 165, 0, 220);
@@ -33,7 +30,7 @@ bool bridge2Crafted = false;
 bool bridge3Crafted = false;
 bool bridge4Crafted = false;
 
-// inventory logic here
+// Inventory logic
 struct Item
 {
     std::string name;
@@ -89,11 +86,9 @@ void drawBar(sf::RenderWindow &window, float x, float y, float width, float heig
     window.draw(bar);
 };
 
-// draw a big rectangle for the inventory just for testing
 void drawInventory(sf::RenderWindow &window, float x, float y, float width, float height, sf::Color color, sf::Font &font)
 {
     sf::View originalView = window.getView();
-
     sf::View uiView(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
     window.setView(uiView);
 
@@ -107,33 +102,25 @@ void drawInventory(sf::RenderWindow &window, float x, float y, float width, floa
     text.setCharacterSize(24);
     text.setFillColor(sf::Color::White);
 
-    // if item is wood, display wood icon (assets/item_wood.png) use a for loop to display icon
-
     for (size_t i = 0; i < inventory.size(); ++i)
     {
-        // add the item icon here
-        // add the item icon here
         text.setString(inventory[i].name + " : " + std::to_string(inventory[i].quantity));
         text.setPosition(std::round(x + 10), std::round(y + 10 + i * 30));
         window.draw(text);
-
-        switch (i)
-        {
-        case 0:
-            sf::Texture itemTexture1;
-            // set the size at 32x32
-            itemTexture1.loadFromFile("assets/item_wood.png");
-            sf::Sprite itemSprite1(itemTexture1);
-            itemSprite1.setPosition(x + 10, y + 10 + i * 30);
-            window.draw(itemSprite1);
-            break;
-        }
     }
+
+    // Display controls for eating and drinking
+    text.setString("Press 'F' to eat, 'G' to drink");
+    text.setPosition(x + 10, y + height - 60);
+    window.draw(text);
+
+    text.setString("Press 'I' to close inventory");
+    text.setPosition(x + 10, y + height - 30);
+    window.draw(text);
 
     window.setView(originalView);
 }
 
-// for test only /!\ to remove
 void fillInventory()
 {
     Item fruit;
@@ -154,7 +141,6 @@ void fillInventory()
 
 void displayCaptionText(sf::RenderWindow &window, sf::Font &font, std::string captionText, sf::Vector2f position)
 {
-// put the text in a view
     sf::View originalView = window.getView();
 
     sf::View uiView(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
@@ -170,8 +156,6 @@ void displayCaptionText(sf::RenderWindow &window, sf::Font &font, std::string ca
 
     window.setView(originalView);
 };
-
-//to call it: 
 
 int main()
 {
@@ -253,7 +237,6 @@ int main()
                 // Check if the key pressed is 'I'
                 if (event.key.code == sf::Keyboard::I)
                 {
-                    // Toggle inventory only on key press
                     isInventoryOpen = !isInventoryOpen;
                 };
             };
@@ -322,6 +305,27 @@ int main()
                 {
                     // Wrap around to the initial tree stage
                     tilemap[currentTileY][currentTileX] = Grass;
+                }
+            }
+        }
+
+        // If F is pressed; consume a fruit to gain hunger
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
+            for (auto &item : inventory) {
+                if (item.name == "Fruit" && item.quantity > 0) {
+                    item.quantity -= 1;
+                    playerFood += 30.0f; // Increase hunger when player consumes a fruit
+                    break;
+                }
+            }
+        }
+    
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::G)) {
+            for (auto &item : inventory) {
+                if (item.name == "Water bottle" && item.quantity > 0) {
+                    item.quantity -= 1;
+                    playerFood += 45.0f; // Increase hunger when player consumes a fruit
+                    break;
                 }
             }
         }
@@ -414,6 +418,12 @@ int main()
             playerHealth -= 0.001f;
         };
 
+        // Decrease life if the player walks on a firecamp or is just above a firecamp
+        if (currentTileType == Firecamp || tilemap[currentTileY + 1][currentTileX] == Firecamp)
+        {
+            playerHealth -= 0.01f;
+        };
+
         // End the game if player health is zero by closing the window and displaying a game over message in ASCII art
         if (playerHealth <= 0)
         {
@@ -448,6 +458,9 @@ int main()
             int tileY = newPosition.y / tileSize;
             if (tilemap[tileY][tileX] != Water)
             {
+                // Move the player to the new position
+                playerPosition = newPosition;
+                playerSprite.setPosition(playerPosition);
                 // Move the player to the new position
                 playerPosition = newPosition;
                 playerSprite.setPosition(playerPosition);
@@ -537,13 +550,13 @@ int main()
         };
 
         // function to display the tiles coordinates
-        sf::Text text;
-        text.setFont(font);
-        text.setCharacterSize(24);
-        text.setFillColor(sf::Color::White);
-        text.setString("X: " + std::to_string(currentTileX) + " Y: " + std::to_string(currentTileY));
-        text.setPosition(playerPosition.x - 50, playerPosition.y - 50);
-        window.draw(text);
+        // sf::Text text;
+        // text.setFont(font);
+        // text.setCharacterSize(24);
+        // text.setFillColor(sf::Color::White);
+        // text.setString("X: " + std::to_string(currentTileX) + " Y: " + std::to_string(currentTileY));
+        // text.setPosition(playerPosition.x - 50, playerPosition.y - 50);
+        // window.draw(text);
 
         // ======
         // Beginning of bridge 1 crafting function
@@ -602,7 +615,6 @@ int main()
                         // std::cout << "You need 10 wood to craft a bridge" << std::endl;
                         // display this text to the screen
                         displayCaptionText(window, font, "You need 10 wood to craft a bridge", sf::Vector2f(515, 790));
-
                     }
                 }
             }
