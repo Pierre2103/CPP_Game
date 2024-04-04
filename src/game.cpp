@@ -28,6 +28,11 @@ int alternate = 0;
 
 bool isInventoryOpen = false;
 
+bool bridge1Crafted = false;
+bool bridge2Crafted = false;
+bool bridge3Crafted = false;
+bool bridge4Crafted = false;
+
 // inventory logic here
 struct Item
 {
@@ -59,6 +64,7 @@ enum Terrain
     ShelterWalls,
     AnimalSpawner,
     PlayerSpawn,
+    Wood,
     NumTerrains
 };
 
@@ -100,10 +106,9 @@ void drawInventory(sf::RenderWindow &window, float x, float y, float width, floa
 
     // if item is wood, display wood icon (assets/item_wood.png) use a for loop to display icon
 
-
     for (size_t i = 0; i < inventory.size(); ++i)
     {
-        //add the item icon here
+        // add the item icon here
         text.setString(inventory[i].name + " : " + std::to_string(inventory[i].quantity));
         text.setPosition(std::round(x + 10), std::round(y + 10 + i * 30));
         window.draw(text);
@@ -134,7 +139,7 @@ void fillInventory()
 
     Item item2;
     item2.name = "wood";
-    item2.quantity = 3;
+    item2.quantity = 9;
     inventory.push_back(item2);
 
     Item item3;
@@ -142,6 +147,27 @@ void fillInventory()
     item3.quantity = 1;
     inventory.push_back(item3);
 };
+
+void displayCaptionText(sf::RenderWindow &window, sf::Font &font, std::string captionText, sf::Vector2f position)
+{
+// put the text in a view
+    sf::View originalView = window.getView();
+
+    sf::View uiView(sf::FloatRect(0, 0, window.getSize().x, window.getSize().y));
+    window.setView(uiView);
+
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(24);
+    text.setFillColor(sf::Color::White);
+    text.setString(captionText);
+    text.setPosition(position);
+    window.draw(text);
+
+    window.setView(originalView);
+};
+
+//to call it: 
 
 int main()
 {
@@ -180,6 +206,7 @@ int main()
     textures[ShelterWalls].loadFromFile("assets/no_texture.png");
     textures[AnimalSpawner].loadFromFile("assets/no_texture.png");
     textures[PlayerSpawn].loadFromFile("assets/PlayerSpawn.png");
+    textures[Wood].loadFromFile("assets/wood.png");
 
     std::vector<sf::Sprite> terrainSprites(Terrain::NumTerrains);
     for (int i = 0; i < Terrain::NumTerrains; ++i)
@@ -355,9 +382,9 @@ int main()
             int tileY = newPosition.y / tileSize;
             // if (tilemap[tileY][tileX] != Water)
             // {
-                // Move the player to the new position
-                playerPosition = newPosition;
-                playerSprite.setPosition(playerPosition);
+            // Move the player to the new position
+            playerPosition = newPosition;
+            playerSprite.setPosition(playerPosition);
             // };
         };
 
@@ -440,8 +467,88 @@ int main()
         }
         else
         {
-            std::cout << "Inventory is closed" << std::endl;
+            // std::cout << "Inventory is closed" << std::endl;
         };
+
+        // function to display the tiles coordinates
+        sf::Text text;
+        text.setFont(font);
+        text.setCharacterSize(24);
+        text.setFillColor(sf::Color::White);
+        text.setString("X: " + std::to_string(currentTileX) + " Y: " + std::to_string(currentTileY));
+        text.setPosition(playerPosition.x - 50, playerPosition.y - 50);
+        window.draw(text);
+
+        // ======
+        // Beginning of bridge 1 crafting function
+        // ======
+
+        if (currentTileX >= 182 && currentTileX <= 187 && currentTileY >= 95 && currentTileY <= 99) //trigger zone
+        {
+            if (!bridge1Crafted)
+            {
+                displayCaptionText(window, font, "Press 'E' to craft the bridge to the second island", sf::Vector2f(475, 750));
+
+                // if the player presses 'E' and has 10 wood in their inventory
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+                {
+                    // check if the player has 10 wood in their inventory
+                    bool hasWood = false;
+                    for (size_t i = 0; i < inventory.size(); ++i)
+                    {
+                        if (inventory[i].name == "wood" && inventory[i].quantity >= 10)
+                        {
+                            hasWood = true;
+                            break;
+                        }
+                    }
+
+                    // if the player has 10 wood in their inventory
+                    if (hasWood)
+                    {
+                        // remove 10 wood from the inventory
+                        for (size_t i = 0; i < inventory.size(); ++i)
+                        {
+                            if (inventory[i].name == "wood")
+                            {
+                                inventory[i].quantity -= 10;
+                                if (inventory[i].quantity == 0)
+                                {
+                                    inventory.erase(inventory.begin() + i);
+                                }
+                                break;
+                            }
+                        }
+
+                        // replace the water tiles with wood tiles
+                        for (int y = 98; y <= 103; ++y)
+                        {
+                            for (int x = 184; x <= 186; ++x)
+                            {
+                                tilemap[y][x] = Wood;
+                            }
+                        }
+
+                        displayCaptionText(window, font, "Bridge has been crafted", sf::Vector2f(475, 750));
+                        bridge1Crafted = true;
+                    }
+                    else
+                    {
+                        // std::cout << "You need 10 wood to craft a bridge" << std::endl;
+                        // display this text to the screen
+                        displayCaptionText(window, font, "You need 10 wood to craft a bridge", sf::Vector2f(515, 790));
+
+                    }
+                }
+            }
+            else
+            {
+                // std::cout << "Bridge 1 has already been crafted" << std::endl;
+            }
+        };
+        // ======
+        // End of bridge 1 crafting function
+        // ======
 
         // Display the contents of the window
         window.display();
