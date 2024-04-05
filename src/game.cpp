@@ -13,6 +13,7 @@
 */
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <array>
 #include <vector>
 #include <iostream>
@@ -57,6 +58,8 @@ bool bridge2Crafted = false;
 bool bridge3Crafted = false;
 bool bridge4Crafted = false;
 bool EndGame = false;
+
+bool playWalkingSound = false;
 
 /*
 * ========================================================================================================================
@@ -440,6 +443,33 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Night 4 Life");
 
+    // play background music here (sound_background.mp3)
+    sf::Music music;
+    if (!music.openFromFile("assets/sound_background.mp3"))
+    {
+        return -1;
+        std::cout << "Error loading music" << std::endl;
+    }
+    music.setLoop(true);
+    music.setVolume(50);
+
+    music.play();
+
+    // play the sound of walking on grass
+    sf::SoundBuffer buffer;
+    if (!buffer.loadFromFile("assets/sound_walking.mp3"))
+    {
+        return -1;
+    }
+    sf::Sound sound;
+    sound.setBuffer(buffer);
+    sound.setLoop(true);
+    sound.setVolume(75);
+
+    if (playWalkingSound){
+        sound.play();
+    }
+
     // Load icons
     sf::Texture hungerIconTexture;
     hungerIconTexture.loadFromFile("assets/hunger.png");
@@ -529,7 +559,7 @@ int main()
             if (event.type == sf::Event::Closed)
             {
                 window.close();
-            };
+            };        
 
             /*
             * ========================================================================================================================
@@ -793,6 +823,8 @@ int main()
             default:
                 break;
             };
+
+            playWalkingSound = true;
         }
 
         // Check if the key pressed is 'Q', 'A', or 'Left'
@@ -810,6 +842,8 @@ int main()
             default:
                 break;
             };
+
+            playWalkingSound = true;
         }
 
         // Check if the key pressed is 'S', or 'Down'
@@ -827,6 +861,8 @@ int main()
             default:
                 break;
             };
+
+            playWalkingSound = true;
         }
 
         // Check if the key pressed is 'D', or 'Right'
@@ -844,7 +880,21 @@ int main()
             default:
                 break;
             };
-        };
+            
+            playWalkingSound = true;
+        }
+
+        // If the player is not moving, stop the walking sound
+
+
+        // Play the walking sound
+
+
+        while (movement.x != 0 && movement.y != 0)
+        {
+            sound.play();
+            playWalkingSound = true;
+        }
 
         /*
         * ======================================================================================================================================================
@@ -1495,6 +1545,8 @@ int main()
         // Display the contents of the window
         window.display();
     }
+
+
 
     return 0;
 }
