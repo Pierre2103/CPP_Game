@@ -33,7 +33,7 @@
 
 const int windowWidth = 1920;
 const int windowHeight = 1080;
-const int speed = 10;    // standard is 4, debug is 7
+const int speed = 4;    // standard is 4, debug is 7
 const int barWidth = 50; // Width of each bar
 const int barHeight = 5; // Height of each bar
 
@@ -1449,6 +1449,7 @@ int main()
                 hasKey1 = false;
                 hasKey2 = false;
                 hasKey3 = false;
+                EndGame = false;
                 window.clear();
             }
 
