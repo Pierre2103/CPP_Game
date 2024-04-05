@@ -34,6 +34,10 @@ You win the game when you find the black box of the plane and you lose the game 
 - Move Right: D
 - Interact: E
 - Inventory: I
+- Drink: G
+- Eat: F
+- Zoom in: M
+- Zoom out: P
 
 ### AZERTY Keyboard
 
@@ -43,3 +47,7 @@ You win the game when you find the black box of the plane and you lose the game 
 - Move Right: D
 - Interact: E
 - Inventory: I
+- Drink: G
+- Eat: F
+- Zoom in: M
+- Zoom out: P
